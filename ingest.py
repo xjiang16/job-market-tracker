@@ -1,7 +1,12 @@
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 import requests
 
-app_id = "b65e4d14"
-app_key = "3a38770353cd861859730adfafca31d5"
+app_id = os.environ["ADZUNA_APP_ID"]
+app_key = os.environ["ADZUNA_APP_KEY"]
 
 url = "https://api.adzuna.com/v1/api/jobs/us/search/1"
 params = {
