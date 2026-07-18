@@ -33,6 +33,12 @@ for keyword in keywords:
         safe_keyword = keyword.replace(" ", "_")
         safe_location = location.replace(" ", "_")
         filename = f"data/raw/{date.today().isoformat()}_{safe_keyword}_{safe_location}.json"
+                
+        data_to_save = {
+            "search_keyword": keyword,
+            "search_location": location,
+            "response": response.json(),
+        }
+
         with open(filename, "w") as f:
-            json.dump(response.json(), f, indent=2)
-        print(f"Saved to {filename}")
+            json.dump(data_to_save, f, indent=2)
