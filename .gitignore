@@ -3,3 +3,9 @@ venv/
 .venv/
 __pycache__/
 data/raw/*.json
+
+job_market_tracker_dbt/logs/
+job_market_tracker_dbt/target/
+job_market_tracker_dbt/dbt_packages/
+logs/
+
