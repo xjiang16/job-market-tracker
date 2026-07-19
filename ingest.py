@@ -15,8 +15,19 @@ app_key = os.environ["ADZUNA_APP_KEY"]
 
 url = "https://api.adzuna.com/v1/api/jobs/us/search/1"
 
-keywords = ["data engineer", "analytics engineer", "data analytic engineer"]
-locations = ["Austin TX", "Remote"]
+keywords = [
+    "data engineer",
+    "data engineer II",
+    "analytics engineer",
+    "senior data engineer",
+    "data platform engineer",
+]
+
+locations = [
+    "Austin TX",
+    "Remote",
+    "Texas",
+]
 
 for keyword in keywords:
     for location in locations:
