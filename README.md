@@ -6,11 +6,10 @@ in-demand skills, salary ranges, and hiring locations.
 ## What it does
 
 Pulls job posting data from the Adzuna API across multiple job titles and
-locations, lands the raw results as JSON files, then loads them into
-Snowflake for downstream analysis. The eventual goal is a full pipeline:
-raw data → Snowflake → dbt models → Airflow orchestration, answering
-questions like "what skills show up most in DE postings right now" and
-"how do salaries compare by location."
+locations, lands the raw results as JSON files, loads them into Snowflake,
+then transforms them with dbt into clean, deduplicated, analysis-ready
+models — answering questions like "what skills show up most in DE postings
+right now" and "how do salaries compare by location."
 
 ## Architecture
 
@@ -25,8 +24,12 @@ Currently working:
 - Ingestion script pulls postings across multiple keywords and locations
 - Raw API responses saved locally as dated JSON files
 - API credentials secured via environment variables (not committed to git)
-- Snowflake connection tested and working
-- Loader script inserts raw postings from local JSON into Snowflake
+- Loader script inserts raw postings into Snowflake
+- dbt project connected to Snowflake
+- `stg_job_postings` model: deduplicates raw postings, keeping the most
+  recently loaded version of each job ID
+- `job_skills` model: flags whether each posting's description mentions
+  specific tools (Python, SQL, Airflow, Snowflake, dbt)
 
 ## Setup
 
@@ -38,7 +41,7 @@ Currently working:
 ```
 3. Install dependencies:
 ```bash
-   pip install requests python-dotenv snowflake-connector-python
+   pip install requests python-dotenv snowflake-connector-python dbt-snowflake
 ```
 4. Create a `.env` file in the project root (see `.env.example` for the
    required keys). You'll need:
@@ -49,15 +52,14 @@ Currently working:
 ```bash
    python ingest.py
 ```
-   Check `data/raw/` for the saved JSON output — one file per
-   keyword/location combination.
-6. Test the Snowflake connection:
-```bash
-   python test_snowflake_connection.py
-```
-7. Load the raw data into Snowflake:
+6. Load raw data into Snowflake:
 ```bash
    python load_to_snowflake.py
+```
+7. Run dbt models:
+```bash
+   cd job_market_tracker_dbt
+   dbt run
 ```
 
 ## Snowflake Setup
@@ -84,9 +86,12 @@ CREATE TABLE JOB_MARKET_TRACKER.RAW.JOB_POSTINGS (
 );
 ```
 
+dbt connects via a separate `profiles.yml` (stored outside this repo, in
+`~/.dbt/`) and materializes cleaned models into the `ANALYTICS` schema.
+
 Note: the raw layer is intentionally append-only — re-running the loader
-will insert duplicate rows for postings already loaded. Deduplication is
-handled downstream in the dbt transformation layer, not at load time.
+inserts duplicate rows for postings already loaded. Deduplication happens
+downstream in `stg_job_postings`, not at load time.
 
 ## Configuration
 
@@ -105,6 +110,7 @@ Add or remove entries to change what gets searched.
 - [x] Loop across multiple keywords and locations
 - [x] Secure credential handling via `.env`
 - [x] Load raw data into Snowflake
-- [ ] dbt models: clean jobs table + skills extraction
+- [x] dbt staging model with deduplication
+- [x] dbt skills-extraction model
 - [ ] dbt tests for data quality
 - [ ] Airflow DAG to orchestrate daily runs
