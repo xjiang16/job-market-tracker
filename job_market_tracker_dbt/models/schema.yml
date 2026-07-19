@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: stg_job_postings
+    columns:
+      - name: job_id
+        tests:
+          - not_null
+          - unique
+
+  - name: job_skills
+    columns:
+      - name: job_id
+        tests:
+          - not_null
+          - unique
