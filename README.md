@@ -106,11 +106,11 @@ Add or remove entries to change what gets searched.
 
 ## Roadmap
 
-[x] Adzuna ingestion script
-[x] Loop across multiple keywords and locations
-[x] Secure credential handling via .env
-[x] Load raw data into Snowflake
-[x] dbt staging model with deduplication
-[x] dbt skills-extraction model
-[x] dbt data quality tests
-[x] Airflow DAG to orchestrate daily runs
+- [x] Adzuna ingestion script
+- [x] Loop across multiple keywords and locations
+- [x] Secure credential handling via `.env`
+- [x] Load raw data into Snowflake
+- [x] dbt staging model with deduplication
+- [x] dbt skills-extraction model
+- [x] dbt tests for data quality
+- [x] Airflow DAG to orchestrate daily runs
