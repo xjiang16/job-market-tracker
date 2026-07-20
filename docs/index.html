@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Job Market Tracker — What DE postings actually ask for</title>
+<meta name="description" content="A data pipeline that pulls live data engineering job postings from the Adzuna API, lands them in Snowflake, and mines them with dbt — orchestrated daily with Airflow." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1720;
+    --bg-raised: #16212c;
+    --bg-code: #0b1219;
+    --text: #e9edf1;
+    --text-dim: #8b98a5;
+    --text-faint: #5b6773;
+    --border: #26333f;
+    --amber: #e8a33d;
+    --teal: #5fd4c4;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--teal); }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 3px;
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---------- Nav ---------- */
+  nav.top {
+    border-bottom: 1px solid var(--border);
+  }
+  nav.top .wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  .brand {
+    font-family: var(--mono);
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .status-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    color: var(--amber);
+    border: 1px solid rgba(232, 163, 61, 0.4);
+    background: rgba(232, 163, 61, 0.08);
+    padding: 3px 8px;
+    border-radius: 3px;
+  }
+  .nav-link {
+    font-family: var(--mono);
+    font-size: 13px;
+    text-decoration: none;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 7px 12px;
+    border-radius: 4px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .nav-link:hover { color: var(--teal); border-color: var(--teal); }
+
+  /* ---------- Hero ---------- */
+  header.hero {
+    padding: 64px 0 40px;
+  }
+  h1 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: clamp(28px, 4vw, 40px);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+    max-width: 20ch;
+  }
+  .lede {
+    color: var(--text-dim);
+    font-size: 16px;
+    max-width: 56ch;
+    margin: 0 0 40px;
+  }
+  .lede code {
+    font-family: var(--mono);
+    background: var(--bg-raised);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+
+  /* ---------- Query block ---------- */
+  .terminal {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #2a3844; }
+  .terminal-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-left: 8px;
+  }
+  pre.query {
+    margin: 0;
+    padding: 20px 22px;
+    font-family: var(--mono);
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: #c7d3dd;
+    overflow-x: auto;
+  }
+  .kw { color: var(--teal); }
+  .cm { color: var(--text-faint); }
+
+  /* ---------- Results ---------- */
+  .results {
+    padding: 22px 22px 26px;
+  }
+  .results-caption {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--text-faint);
+    margin: 0 0 18px;
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .bar-label {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--text-dim);
+    width: 100px;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .bar-track {
+    flex: 1;
+    height: 10px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--teal), var(--amber));
+    border-radius: 3px;
+    transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .bar-value {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--text-faint);
+    width: 84px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  /* ---------- Stat cards ---------- */
+  section.findings { padding: 56px 0; border-top: 1px solid var(--border); }
+  h2 {
+    font-family: var(--sans);
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 22px;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 600px) {
+    .stat-grid { grid-template-columns: 1fr; }
+  }
+  .stat-card {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px;
+  }
+  .stat-number {
+    font-family: var(--mono);
+    font-size: 34px;
+    font-weight: 500;
+    color: var(--teal);
+    margin-bottom: 8px;
+  }
+  .stat-card.warm .stat-number { color: var(--amber); }
+  .stat-desc {
+    color: var(--text-dim);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .findings-note {
+    color: var(--text-faint);
+    font-size: 13.5px;
+    line-height: 1.6;
+    max-width: 66ch;
+    margin: 0;
+  }
+
+  /* ---------- Pipeline ---------- */
+  section.pipeline { padding: 56px 0; border-top: 1px solid var(--border); }
+  .steps { display: flex; flex-direction: column; }
+  .step {
+    display: flex;
+    gap: 20px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text-faint);
+    width: 28px;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+  .step-title {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.03em;
+    color: var(--teal);
+    margin: 0 0 4px;
+  }
+  .step-desc {
+    color: var(--text-dim);
+    font-size: 14.5px;
+    margin: 0;
+  }
+  .stack-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 28px;
+  }
+  .stack-pill {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 5px 10px;
+    border-radius: 4px;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0 48px;
+  }
+  .footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .btn {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--bg);
+    background: var(--teal);
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 5px;
+    font-weight: 500;
+    transition: opacity 0.15s ease;
+  }
+  .btn:hover { opacity: 0.85; }
+  .footer-meta {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .bar-fill { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <div class="brand">
+      JOB_MARKET_TRACKER
+      <span class="status-pill">in development</span>
+    </div>
+    <a class="nav-link" href="https://github.com/xjiang16/job-market-tracker" target="_blank" rel="noopener">Source ↗</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>What do data engineering postings actually ask for?</h1>
+    <p class="lede">
+      A pipeline that pulls live postings from the <code>Adzuna API</code>, lands them in
+      <code>Snowflake</code>, and mines them with <code>dbt</code> — orchestrated daily with
+      <code>Airflow</code>. Below is a real query against the current dataset.
+    </p>
+
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="terminal-label">analytics.job_skills</span>
+      </div>
+      <pre class="query"><span class="kw">SELECT</span> skill, <span class="kw">COUNT</span>(*) <span class="kw">AS</span> mentions
+<span class="kw">FROM</span> analytics.job_skills
+<span class="kw">WHERE</span> mentions_python <span class="kw">OR</span> mentions_sql
+   <span class="kw">OR</span> mentions_airflow <span class="kw">OR</span> mentions_snowflake <span class="kw">OR</span> mentions_dbt
+<span class="kw">GROUP BY</span> skill
+<span class="kw">ORDER BY</span> mentions <span class="kw">DESC</span>;
+<span class="cm">-- 94 postings scanned, deduplicated by job_id</span></pre>
+
+      <div class="results" id="results">
+        <p class="results-caption">RESULTS &middot; snapshot Jul 19, 2026</p>
+
+        <div class="bar-row">
+          <span class="bar-label">SQL</span>
+          <div class="bar-track"><div class="bar-fill" data-pct="11"></div></div>
+          <span class="bar-value" data-count="10 · 10.6%">0 · 0%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Python</span>
+          <div class="bar-track"><div class="bar-fill" data-pct="6"></div></div>
+          <span class="bar-value" data-count="6 · 6.4%">0 · 0%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Snowflake</span>
+          <div class="bar-track"><div class="bar-fill" data-pct="3"></div></div>
+          <span class="bar-value" data-count="3 · 3.2%">0 · 0%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">Airflow</span>
+          <div class="bar-track"><div class="bar-fill" data-pct="1"></div></div>
+          <span class="bar-value" data-count="1 · 1.1%">0 · 0%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-label">dbt</span>
+          <div class="bar-track"><div class="bar-fill" data-pct="1"></div></div>
+          <span class="bar-value" data-count="1 · 1.1%">0 · 0%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="findings">
+  <div class="wrap">
+    <h2>What the data shows</h2>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-number">10.6%</div>
+        <div class="stat-desc">of postings explicitly name SQL — the most commonly named tool in this sample.</div>
+      </div>
+      <div class="stat-card warm">
+        <div class="stat-number">85%</div>
+        <div class="stat-desc">mention none of the five tracked tools by name, describing responsibilities in general terms instead.</div>
+      </div>
+    </div>
+    <p class="findings-note">
+      This is an early, small sample (94 postings) built while actively job hunting for data engineering roles.
+      Broader keyword coverage and more days of accumulated data would sharpen these numbers — that's the next
+      iteration.
+    </p>
+  </div>
+</section>
+
+<section class="pipeline">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">01</span>
+        <div>
+          <p class="step-title">INGEST</p>
+          <p class="step-desc">A Python script pulls postings from the Adzuna API across multiple job titles and locations.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">02</span>
+        <div>
+          <p class="step-title">LOAD</p>
+          <p class="step-desc">Raw postings land in Snowflake as an append-only log — nothing is cleaned or deduplicated yet.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">03</span>
+        <div>
+          <p class="step-title">TRANSFORM</p>
+          <p class="step-desc">dbt deduplicates postings, extracts skill mentions, and runs automated data-quality tests.</p>
+        </div>
+      </div>
+      <div class="step">
+        <span class="step-num">04</span>
+        <div>
+          <p class="step-title">ORCHESTRATE</p>
+          <p class="step-desc">Airflow runs the full pipeline on a schedule, in dependency order, without manual steps.</p>
+        </div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <span class="stack-pill">Python</span>
+      <span class="stack-pill">Snowflake</span>
+      <span class="stack-pill">dbt</span>
+      <span class="stack-pill">Airflow</span>
+      <span class="stack-pill">Adzuna API</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <a class="btn" href="https://github.com/xjiang16/job-market-tracker" target="_blank" rel="noopener">View the code on GitHub</a>
+    <span class="footer-meta">Built by Xiaoqi Jiang</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var animated = false;
+
+    function animate() {
+      if (animated) return;
+      animated = true;
+      document.querySelectorAll('.bar-fill').forEach(function (el) {
+        el.style.width = el.getAttribute('data-pct') + '%';
+      });
+      document.querySelectorAll('.bar-value').forEach(function (el) {
+        el.textContent = el.getAttribute('data-count');
+      });
+    }
+
+    if (prefersReduced) {
+      animate();
+    } else {
+      var target = document.getElementById('results');
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            animate();
+            observer.disconnect();
+          }
+        });
+      }, { threshold: 0.3 });
+      observer.observe(target);
+    }
+  })();
+</script>
+
+</body>
+</html>
