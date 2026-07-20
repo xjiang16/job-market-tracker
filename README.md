@@ -8,7 +8,7 @@
 ![dbt](https://img.shields.io/badge/dbt-transform-FF694B?style=flat-square&logo=dbt&logoColor=white)
 ![Airflow](https://img.shields.io/badge/Airflow-orchestration-017CEE?style=flat-square&logo=apacheairflow&logoColor=white)
 
----
+
 
 ## What this is
 
@@ -18,7 +18,7 @@ A pipeline that pulls live job postings from the **Adzuna API**, lands them in *
 
 ** [View the live results page](https://xjiang16.github.io/job-market-tracker/)**
 
----
+
 
 ## Table of Contents
 
@@ -32,7 +32,7 @@ A pipeline that pulls live job postings from the **Adzuna API**, lands them in *
 - [Roadmap](#roadmap)
 - [What I learned building this](#what-i-learned-building-this)
 
----
+
 
 ## Architecture
 
@@ -50,6 +50,13 @@ flowchart LR
     G -.orchestrates.-> E
 ```
 
+**Jump to source:**
+[`ingest.py`](ingest.py) ·
+[`load_to_snowflake.py`](load_to_snowflake.py) ·
+[`stg_job_postings.sql`](job_market_tracker_dbt/models/stg_job_postings.sql) ·
+[`job_skills.sql`](job_market_tracker_dbt/models/job_skills.sql) ·
+[`schema.yml`](job_market_tracker_dbt/models/schema.yml)
+
 Every run:
 
 - Pull postings across multiple job titles and locations
@@ -58,7 +65,7 @@ Every run:
 - Detect mentions of Python, SQL, Airflow, Snowflake, and dbt
 - Execute the entire pipeline through Airflow in dependency order
 
----
+
 
 ## What the data shows
 
@@ -78,7 +85,7 @@ Instead, most postings describe responsibilities in general terms such as *"buil
 
 This is an intentionally small sample built while actively job hunting. Expanding keyword coverage and collecting data over a longer period will produce more representative trends (see the roadmap below).
 
----
+
 
 ## Tech Stack
 
@@ -91,7 +98,7 @@ This is an intentionally small sample built while actively job hunting. Expandin
 | Orchestration | Apache Airflow | Industry-standard workflow scheduler |
 | Secrets | `python-dotenv` | Keeps credentials out of source control |
 
----
+
 
 ## Project Structure
 
@@ -117,7 +124,7 @@ job-market-tracker/
 
 > **Note:** Airflow's DAG file lives outside this repository in `~/airflow/dags/`, since Airflow manages its own DAG directory independently.
 
----
+
 
 ## Setup
 
@@ -134,7 +141,7 @@ pip install -r requirements.txt
 pip install dbt-snowflake
 ```
 
----
+
 
 ### 2. Configure credentials
 
@@ -160,7 +167,7 @@ Fill in:
 - Database
 - Schema
 
----
+
 
 ### 3. Create Snowflake objects
 
@@ -183,7 +190,7 @@ CREATE TABLE JOB_MARKET_TRACKER.RAW.JOB_POSTINGS (
 );
 ```
 
----
+
 
 ### 4. Configure dbt
 
@@ -195,7 +202,7 @@ dbt init
 
 Configure `~/.dbt/profiles.yml` to point to your Snowflake account using the `ANALYTICS` schema.
 
----
+
 
 ### 5. Configure Airflow *(optional)*
 
@@ -214,7 +221,7 @@ The DAG references this project's virtual environment directly to execute:
 - `dbt run`
 - `dbt test`
 
----
+
 
 ## Running the Pipeline
 
@@ -232,7 +239,7 @@ dbt run
 dbt test
 ```
 
----
+
 
 ### Scheduled execution
 
@@ -242,7 +249,7 @@ airflow standalone
 
 Enable the `job_market_tracker` DAG in the Airflow UI (`http://localhost:8080`) to execute the entire workflow automatically on its schedule.
 
----
+
 
 ## Data Quality
 
@@ -256,7 +263,7 @@ The raw ingestion layer is intentionally append-only.
 
 Duplicate records are preserved in the raw table so transformations can be rerun later if business logic changes.
 
----
+
 
 ## Roadmap
 
@@ -268,11 +275,13 @@ Duplicate records are preserved in the raw table so transformations can be rerun
 - [x] dbt tests
 - [x] Airflow orchestration
 - [x] Public results page
+
+## Potential Improvements
 - [ ] Larger keyword/location coverage
 - [ ] NLP-based skill extraction
 - [ ] Additional job sources (company ATS boards)
 
----
+
 
 ## What I Learned Building This
 
@@ -290,7 +299,7 @@ Along the way I debugged several real-world issues, including:
 
 None of these problems were solved in one step. Like most data engineering work, each issue was resolved by reading logs, isolating failures, and debugging incrementally.
 
----
+
 
 ## Author
 
