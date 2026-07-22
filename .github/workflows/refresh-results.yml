@@ -1,0 +1,90 @@
+name: Refresh Job Market Tracker Data
+
+# Runs the full pipeline on GitHub's own servers, daily, for free (public repo).
+# No laptop, no manual steps. Triggers:
+#   - schedule: automatic, once a day
+#   - workflow_dispatch: lets you click "Run workflow" manually from the Actions tab
+
+on:
+  schedule:
+    - cron: "0 12 * * *"   # 12:00 UTC daily (~7am Central) — adjust as you like
+  workflow_dispatch: {}
+
+permissions:
+  contents: write   # needed so the workflow can commit the refreshed data.json back
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install dbt-snowflake
+
+      - name: Write dbt profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml << EOF
+          job_market_tracker_dbt:
+            target: dev
+            outputs:
+              dev:
+                type: snowflake
+                account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+                user: ${{ secrets.SNOWFLAKE_USER }}
+                password: ${{ secrets.SNOWFLAKE_PASSWORD }}
+                role: ACCOUNTADMIN
+                database: JOB_MARKET_TRACKER
+                warehouse: COMPUTE_WH
+                schema: ANALYTICS
+                threads: 4
+          EOF
+
+      - name: Run ingestion
+        env:
+          ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+        run: python ingest.py
+
+      - name: Load raw postings into Snowflake
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_WAREHOUSE: COMPUTE_WH
+          SNOWFLAKE_DATABASE: JOB_MARKET_TRACKER
+          SNOWFLAKE_SCHEMA: RAW
+        run: python load_to_snowflake.py
+
+      - name: Run dbt models and tests
+        run: |
+          cd job_market_tracker_dbt
+          dbt run
+          dbt test
+
+      - name: Export fresh results snapshot
+        env:
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+          SNOWFLAKE_WAREHOUSE: COMPUTE_WH
+          SNOWFLAKE_DATABASE: JOB_MARKET_TRACKER
+          SNOWFLAKE_SCHEMA: ANALYTICS
+        run: python export_results.py
+
+      - name: Commit and push updated results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/data.json
+          git diff --cached --quiet || git commit -m "Automated daily results refresh"
+          git push
