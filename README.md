@@ -1,8 +1,8 @@
 # Data Engineer Job Market Tracker
 
-**A live data pipeline that tracks what data engineering job postings actually ask for.**
+**An automated data pipeline that tracks what data engineering job postings actually ask for.**
 
-[![Live Results](https://img.shields.io/badge/results-live_site-5fd4c4?style=flat-square)](https://xjiang16.github.io/job-market-tracker/)
+[![Live Results](https://img.shields.io/badge/results-auto--updated_daily-5fd4c4?style=flat-square)](https://xjiang16.github.io/job-market-tracker/)
 ![Python](https://img.shields.io/badge/Python-3.10-3776AB?style=flat-square&logo=python&logoColor=white)
 ![Snowflake](https://img.shields.io/badge/Snowflake-warehouse-29B5E8?style=flat-square&logo=snowflake&logoColor=white)
 ![dbt](https://img.shields.io/badge/dbt-transform-FF694B?style=flat-square&logo=dbt&logoColor=white)
@@ -12,7 +12,11 @@
 
 ## What this is
 
-A pipeline that pulls live job postings from the **Adzuna API**, lands them in **Snowflake**, transforms and validates them with **dbt**, and runs end-to-end daily via **Apache Airflow**—built to answer one question:
+A data pipeline that pulls job postings from the **Adzuna API**, lands them in **Snowflake**, transforms and validates them with **dbt**, and automatically refreshes a public dashboard through **GitHub Actions**.
+
+The pipeline is also orchestrated locally with **Apache Airflow** to demonstrate production-style workflow scheduling and dependency management.
+
+Built to answer one question:
 
 > **What do data engineering job postings actually ask for, and how often do they mention specific tools?**
 
@@ -38,16 +42,23 @@ A pipeline that pulls live job postings from the **Adzuna API**, lands them in *
 
 ```mermaid
 flowchart LR
-    A["Adzuna API"] --> B["Python\ningestion script"]
+    A["Adzuna API"] --> B["Python\nIngestion"]
     B --> C[("Snowflake\nRAW.JOB_POSTINGS")]
-    C --> D["dbt\nstg_job_postings\n(dedup)"]
+    C --> D["dbt\nstg_job_postings\n(deduplication)"]
     D --> E["dbt\njob_skills\n(skill extraction)"]
     E --> F[("Snowflake\nANALYTICS")]
+    F --> G["export_results.py"]
+    G --> H["docs/data.json"]
+    H --> I["GitHub Pages\nDashboard"]
 
-    G["Airflow DAG\n(daily schedule)"] -.orchestrates.-> B
-    G -.orchestrates.-> C
-    G -.orchestrates.-> D
-    G -.orchestrates.-> E
+    J["GitHub Actions\nDaily workflow"] -.runs.-> B
+    J -.runs.-> C
+    J -.runs.-> D
+    J -.runs.-> G
+
+    K["Airflow DAG\nLocal orchestration"] -.orchestrates.-> B
+    K -.orchestrates.-> C
+    K -.orchestrates.-> D
 ```
 
 **Jump to source:**
@@ -63,8 +74,7 @@ Every run:
 - Load raw JSON into Snowflake (append-only)
 - Deduplicate by job ID using dbt (keeping the most recently loaded version)
 - Detect mentions of Python, SQL, Airflow, Snowflake, and dbt
-- Execute the entire pipeline through Airflow in dependency order
-
+- Execute the pipeline through either GitHub Actions (automated cloud execution) or Apache Airflow (local orchestration)
 
 
 ## What the data shows
@@ -106,8 +116,12 @@ This is an intentionally small sample built while actively job hunting. Expandin
 job-market-tracker/
 ├── ingest.py
 ├── load_to_snowflake.py
+├── export_results.py
 ├── requirements.txt
 ├── .env.example
+├── .github/
+│   └── workflows/
+│       └── refresh-results.yml
 ├── data/
 │   └── raw/
 ├── job_market_tracker_dbt/
@@ -116,9 +130,9 @@ job-market-tracker/
 │   │   ├── schema.yml
 │   │   ├── stg_job_postings.sql
 │   │   └── job_skills.sql
-│   └── dbt_project.yml
 ├── docs/
-│   └── index.html
+│   ├── index.html
+│   └── data.json
 └── README.md
 ```
 
@@ -221,11 +235,69 @@ The DAG references this project's virtual environment directly to execute:
 - `dbt run`
 - `dbt test`
 
+Airflow provides a production-style orchestration workflow with task dependencies, scheduling, and monitoring.
+
+### 6. Configure GitHub Actions *(automated refresh)*
+
+This repository includes a GitHub Actions workflow that automatically refreshes the public results dashboard daily without requiring a local machine.
+
+The workflow:
+
+1. Runs the Python ingestion script
+2. Loads new job postings into Snowflake
+3. Executes dbt transformations and data quality tests
+4. Exports analytics results into `docs/data.json`
+5. Updates the GitHub Pages dashboard
+
+Required credentials are securely stored using GitHub Actions Secrets.
+
+Workflow file:
+
+```text
+.github/workflows/refresh-results.yml
+```
+
+To configure GitHub Actions:
+
+1. Add repository secrets in:
+
+```text
+GitHub Repository → Settings → Secrets and variables → Actions
+```
+
+Required secrets:
+
+```text
+ADZUNA_APP_ID
+ADZUNA_APP_KEY
+SNOWFLAKE_ACCOUNT
+SNOWFLAKE_USER
+SNOWFLAKE_PASSWORD
+```
+
+2. Enable workflow permissions:
+
+```text
+GitHub Repository → Settings → Actions → General → Workflow permissions
+
+Select:
+Read and write permissions
+```
+
+3. Trigger the workflow manually from:
+
+```text
+GitHub Repository → Actions → Refresh Job Market Tracker Data → Run workflow
+```
+
+The scheduled workflow runs automatically using GitHub-hosted runners and keeps the public results page updated without requiring a local machine.
 
 
 ## Running the Pipeline
 
 ### Manual execution
+
+Run each step locally:
 
 ```bash
 python ingest.py
@@ -241,14 +313,47 @@ dbt test
 
 
 
-### Scheduled execution
+### Automated execution
+
+The production refresh runs through GitHub Actions on a daily schedule:
+
+```text
+GitHub Actions
+      ↓
+Python ingestion
+      ↓
+Snowflake raw layer
+      ↓
+dbt transformations
+      ↓
+dbt data quality tests
+      ↓
+Export analytics results
+      ↓
+GitHub Pages dashboard
+```
+
+### Local orchestration with Airflow
+
+To run the workflow locally:
 
 ```bash
 airflow standalone
 ```
 
-Enable the `job_market_tracker` DAG in the Airflow UI (`http://localhost:8080`) to execute the entire workflow automatically on its schedule.
+Enable the `job_market_tracker` DAG in the Airflow UI:
 
+```text
+http://localhost:8080
+```
+
+The Airflow DAG executes the pipeline using dependency-based task ordering:
+
+```text
+ingest → load → dbt run → dbt test
+```
+
+Airflow is included as a local orchestration demonstration of production-style workflow scheduling, while GitHub Actions provides automated cloud execution for the public dashboard refresh.
 
 
 ## Data Quality
