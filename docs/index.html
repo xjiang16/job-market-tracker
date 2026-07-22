@@ -197,6 +197,12 @@
     text-align: right;
     flex-shrink: 0;
   }
+  .load-error {
+    font-size: 13px;
+    color: var(--text-faint);
+    margin: 6px 0 0;
+  }
+  .load-error a { color: var(--teal); }
 
   /* ---------- Stat cards ---------- */
   section.findings { padding: 56px 0; border-top: 1px solid var(--border); }
@@ -355,36 +361,15 @@
    <span class="kw">OR</span> mentions_airflow <span class="kw">OR</span> mentions_snowflake <span class="kw">OR</span> mentions_dbt
 <span class="kw">GROUP BY</span> skill
 <span class="kw">ORDER BY</span> mentions <span class="kw">DESC</span>;
-<span class="cm">-- 94 postings scanned, deduplicated by job_id</span></pre>
+<span class="cm" id="query-comment">-- scanning current postings, deduplicated by job_id&hellip;</span></pre>
 
       <div class="results" id="results">
-        <p class="results-caption">RESULTS &middot; snapshot Jul 19, 2026</p>
-
-        <div class="bar-row">
-          <span class="bar-label">SQL</span>
-          <div class="bar-track"><div class="bar-fill" data-pct="11"></div></div>
-          <span class="bar-value" data-count="10 · 10.6%">0 · 0%</span>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label">Python</span>
-          <div class="bar-track"><div class="bar-fill" data-pct="6"></div></div>
-          <span class="bar-value" data-count="6 · 6.4%">0 · 0%</span>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label">Snowflake</span>
-          <div class="bar-track"><div class="bar-fill" data-pct="3"></div></div>
-          <span class="bar-value" data-count="3 · 3.2%">0 · 0%</span>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label">Airflow</span>
-          <div class="bar-track"><div class="bar-fill" data-pct="1"></div></div>
-          <span class="bar-value" data-count="1 · 1.1%">0 · 0%</span>
-        </div>
-        <div class="bar-row">
-          <span class="bar-label">dbt</span>
-          <div class="bar-track"><div class="bar-fill" data-pct="1"></div></div>
-          <span class="bar-value" data-count="1 · 1.1%">0 · 0%</span>
-        </div>
+        <p class="results-caption" id="results-caption">RESULTS &middot; loading&hellip;</p>
+        <div id="bar-rows"><!-- populated from data.json --></div>
+        <p class="load-error" id="load-error" hidden>
+          Couldn't load live results right now — check back shortly, or see the
+          <a href="https://github.com/xjiang16/job-market-tracker">GitHub repo</a> for the latest run.
+        </p>
       </div>
     </div>
   </div>
@@ -395,18 +380,19 @@
     <h2>What the data shows</h2>
     <div class="stat-grid">
       <div class="stat-card">
-        <div class="stat-number">10.6%</div>
-        <div class="stat-desc">of postings explicitly name SQL — the most commonly named tool in this sample.</div>
+        <div class="stat-number" id="stat-top-pct">&mdash;</div>
+        <div class="stat-desc" id="stat-top-desc">Loading current numbers&hellip;</div>
       </div>
       <div class="stat-card warm">
-        <div class="stat-number">85%</div>
-        <div class="stat-desc">mention none of the five tracked tools by name, describing responsibilities in general terms instead.</div>
+        <div class="stat-number" id="stat-none-pct">&mdash;</div>
+        <div class="stat-desc" id="stat-none-desc">Loading current numbers&hellip;</div>
       </div>
     </div>
     <p class="findings-note">
-      This is an early, small sample (94 postings) built while actively job hunting for data engineering roles.
-      Broader keyword coverage and more days of accumulated data would sharpen these numbers — that's the next
-      iteration.
+      This is an early, growing sample built while actively job hunting for data engineering roles. Numbers above
+      reflect the most recent pipeline run, refreshed periodically — not a live per-visit query, since that would
+      mean exposing database credentials publicly and burning warehouse credits on every page view. Broader keyword
+      coverage and more accumulated days of data will keep sharpening these numbers over time.
     </p>
   </div>
 </section>
@@ -464,33 +450,74 @@
 <script>
   (function () {
     var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var animated = false;
 
-    function animate() {
-      if (animated) return;
-      animated = true;
-      document.querySelectorAll('.bar-fill').forEach(function (el) {
-        el.style.width = el.getAttribute('data-pct') + '%';
-      });
-      document.querySelectorAll('.bar-value').forEach(function (el) {
-        el.textContent = el.getAttribute('data-count');
-      });
+    function formatDate(iso) {
+      try {
+        var d = new Date(iso + "T00:00:00");
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      } catch (e) {
+        return iso;
+      }
     }
 
-    if (prefersReduced) {
-      animate();
-    } else {
-      var target = document.getElementById('results');
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            animate();
-            observer.disconnect();
-          }
+    function render(data) {
+      document.getElementById('results-caption').textContent =
+        'RESULTS \u00b7 last updated ' + formatDate(data.last_updated);
+      document.getElementById('query-comment').textContent =
+        '-- ' + data.total_postings + ' postings scanned, deduplicated by job_id';
+
+      var container = document.getElementById('bar-rows');
+      var maxPct = Math.max.apply(null, data.skills.map(function (s) { return s.pct; })) || 1;
+
+      data.skills.forEach(function (s) {
+        var row = document.createElement('div');
+        row.className = 'bar-row';
+        row.innerHTML =
+          '<span class="bar-label">' + s.label + '</span>' +
+          '<div class="bar-track"><div class="bar-fill" data-pct="' + (s.pct / maxPct * 100) + '"></div></div>' +
+          '<span class="bar-value">' + s.count + ' \u00b7 ' + s.pct + '%</span>';
+        container.appendChild(row);
+      });
+
+      var topSkill = data.skills[0];
+      document.getElementById('stat-top-pct').textContent = topSkill.pct + '%';
+      document.getElementById('stat-top-desc').textContent =
+        'of postings explicitly name ' + topSkill.label + ' \u2014 the most commonly named tool in this sample.';
+
+      document.getElementById('stat-none-pct').textContent = data.none_mentioned_pct + '%';
+      document.getElementById('stat-none-desc').textContent =
+        'mention none of the five tracked tools by name, describing responsibilities in general terms instead.';
+
+      if (prefersReduced) {
+        document.querySelectorAll('.bar-fill').forEach(function (el) {
+          el.style.width = el.getAttribute('data-pct') + '%';
         });
-      }, { threshold: 0.3 });
-      observer.observe(target);
+      } else {
+        var target = document.getElementById('results');
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              document.querySelectorAll('.bar-fill').forEach(function (el) {
+                el.style.width = el.getAttribute('data-pct') + '%';
+              });
+              observer.disconnect();
+            }
+          });
+        }, { threshold: 0.3 });
+        observer.observe(target);
+      }
     }
+
+    fetch('data.json', { cache: 'no-store' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('bad response');
+        return res.json();
+      })
+      .then(render)
+      .catch(function () {
+        document.getElementById('load-error').hidden = false;
+        document.getElementById('results-caption').textContent = 'RESULTS';
+      });
   })();
 </script>
 
