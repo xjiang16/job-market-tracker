@@ -20,7 +20,7 @@ Built to answer one question:
 
 > **What do data engineering job postings actually ask for, and how often do they mention specific tools?**
 
-** [View the live results page](https://xjiang16.github.io/job-market-tracker/)**
+** [View the results page — auto-updated daily](https://xjiang16.github.io/job-market-tracker/)**
 
 
 
