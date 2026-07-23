@@ -1,3 +1,5 @@
+![GitHub Actions](https://img.shields.io/github/actions/workflow/status/xjiang16/job-market-tracker/refresh-results.yml?branch=main&label=daily%20pipeline)
+
 # Data Engineer Job Market Tracker
 
 **An automated data pipeline that tracks what data engineering job postings actually ask for.**
@@ -51,30 +53,37 @@ flowchart LR
     G --> H["docs/data.json"]
     H --> I["GitHub Pages\nDashboard"]
 
-    J["GitHub Actions\nDaily workflow"] -.runs.-> B
+    J["GitHub Actions\nDaily automation"] -.runs.-> B
     J -.runs.-> C
     J -.runs.-> D
     J -.runs.-> G
 
-    K["Airflow DAG\nLocal orchestration"] -.orchestrates.-> B
-    K -.orchestrates.-> C
-    K -.orchestrates.-> D
+    K["Apache Airflow\nLocal orchestration"] -.demo.-> B
+    K -.demo.-> C
+    K -.demo.-> D
 ```
 
 **Jump to source:**
+
 [`ingest.py`](ingest.py) ·
 [`load_to_snowflake.py`](load_to_snowflake.py) ·
 [`stg_job_postings.sql`](job_market_tracker_dbt/models/stg_job_postings.sql) ·
 [`job_skills.sql`](job_market_tracker_dbt/models/job_skills.sql) ·
-[`schema.yml`](job_market_tracker_dbt/models/schema.yml)
+[`export_results.py`](export_results.py)
 
-Every run:
+Every automated refresh:
 
-- Pull postings across multiple job titles and locations
-- Load raw JSON into Snowflake (append-only)
-- Deduplicate by job ID using dbt (keeping the most recently loaded version)
-- Detect mentions of Python, SQL, Airflow, Snowflake, and dbt
-- Execute the pipeline through either GitHub Actions (automated cloud execution) or Apache Airflow (local orchestration)
+- Fetches current job postings from the Adzuna API
+- Loads raw records into Snowflake (append-only)
+- Transforms and deduplicates data with dbt
+- Runs dbt data-quality tests
+- Exports aggregated analytics to `docs/data.json`
+- Regenerates the README statistics section
+- Publishes the updated dashboard through GitHub Pages
+
+GitHub Actions runs the production pipeline automatically every day, keeping both the dashboard and README synchronized with the latest data.
+
+Apache Airflow is included as a local orchestration implementation demonstrating the same end-to-end workflow using an industry-standard scheduler.
 
 
 <!-- AUTO-GENERATED:RESULTS:START -->
