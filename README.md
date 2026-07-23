@@ -77,6 +77,7 @@ Every run:
 - Execute the pipeline through either GitHub Actions (automated cloud execution) or Apache Airflow (local orchestration)
 
 
+<!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
 Current snapshot: **94 postings** after deduplication.
@@ -91,9 +92,10 @@ Current snapshot: **94 postings** after deduplication.
 
 The most notable finding is that **85% of postings (80 out of 94) mention none of these five tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. SQL is the only skill mentioned frequently enough to stand out.
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the five tracked tools, **SQL** appears most often in this sample (10.6%).
 
-This is an intentionally small sample built while actively job hunting. Expanding keyword coverage and collecting data over a longer period will produce more representative trends (see the roadmap below).
+This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
+<!-- AUTO-GENERATED:RESULTS:END -->
 
 
 

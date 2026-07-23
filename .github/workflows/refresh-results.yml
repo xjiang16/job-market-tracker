@@ -80,11 +80,14 @@ jobs:
           SNOWFLAKE_DATABASE: JOB_MARKET_TRACKER
           SNOWFLAKE_SCHEMA: ANALYTICS
         run: python export_results.py
-
+      
+      - name: Update README statistics
+        run: python update_readme.py
+      
       - name: Commit and push updated results
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/data.json
+          git add .
           git diff --cached --quiet || git commit -m "Automated daily results refresh"
           git push
