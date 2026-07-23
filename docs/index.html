@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Job Market Tracker — What DE postings actually ask for</title>
-<meta name="description" content="A data pipeline that pulls live data engineering job postings from the Adzuna API, lands them in Snowflake, and mines them with dbt — orchestrated daily with Airflow." />
+<meta name="description" content="A data pipeline that pulls live data engineering job postings from the Adzuna API, lands them in Snowflake, and mines them with dbt — orchestrated with Airflow and refreshed automatically every day." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -58,6 +58,8 @@
     justify-content: space-between;
     padding-top: 20px;
     padding-bottom: 20px;
+    gap: 12px;
+    flex-wrap: wrap;
   }
   .brand {
     font-family: var(--mono);
@@ -72,11 +74,29 @@
     font-family: var(--mono);
     font-size: 11px;
     letter-spacing: 0.03em;
-    color: var(--amber);
-    border: 1px solid rgba(232, 163, 61, 0.4);
-    background: rgba(232, 163, 61, 0.08);
+    color: var(--teal);
+    border: 1px solid rgba(95, 212, 196, 0.35);
+    background: rgba(95, 212, 196, 0.08);
     padding: 3px 8px;
     border-radius: 3px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+  .nav-links {
+    display: flex;
+    gap: 8px;
   }
   .nav-link {
     font-family: var(--mono);
@@ -103,10 +123,17 @@
     margin: 0 0 16px;
     max-width: 20ch;
   }
+  .accent-rule {
+    width: 48px;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--teal), var(--amber));
+    margin: 0 0 20px;
+  }
   .lede {
     color: var(--text-dim);
     font-size: 16px;
-    max-width: 56ch;
+    max-width: 58ch;
     margin: 0 0 40px;
   }
   .lede code {
@@ -154,12 +181,28 @@
   .results {
     padding: 22px 22px 26px;
   }
+  .results-caption-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 18px;
+  }
   .results-caption {
     font-family: var(--mono);
     font-size: 11.5px;
     color: var(--text-faint);
-    margin: 0 0 18px;
+    margin: 0;
   }
+  .raw-link {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--text-faint);
+    text-decoration: none;
+    border-bottom: 1px dashed var(--border);
+  }
+  .raw-link:hover { color: var(--teal); border-color: var(--teal); }
   .bar-row {
     display: flex;
     align-items: center;
@@ -226,7 +269,13 @@
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 22px;
+    transition: transform 0.18s ease, border-color 0.18s ease;
   }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--teal);
+  }
+  .stat-card.warm:hover { border-color: var(--amber); }
   .stat-number {
     font-family: var(--mono);
     font-size: 34px;
@@ -247,6 +296,8 @@
     max-width: 66ch;
     margin: 0;
   }
+  .findings-note a { color: var(--text-faint); text-decoration-color: var(--border); }
+  .findings-note a:hover { color: var(--teal); }
 
   /* ---------- Pipeline ---------- */
   section.pipeline { padding: 56px 0; border-top: 1px solid var(--border); }
@@ -254,9 +305,13 @@
   .step {
     display: flex;
     gap: 20px;
-    padding: 18px 0;
+    padding: 18px 14px;
+    margin: 0 -14px;
     border-bottom: 1px solid var(--border);
+    border-radius: 6px;
+    transition: background 0.15s ease;
   }
+  .step:hover { background: var(--bg-raised); }
   .step:last-child { border-bottom: none; }
   .step-num {
     font-family: var(--mono);
@@ -326,6 +381,8 @@
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .bar-fill { transition: none; }
+    .pulse-dot { animation: none; }
+    .stat-card, .step { transition: none; }
   }
 </style>
 </head>
@@ -335,19 +392,24 @@
   <div class="wrap">
     <div class="brand">
       JOB_MARKET_TRACKER
-      <span class="status-pill">in development</span>
+      <span class="status-pill"><span class="pulse-dot"></span>auto-updated daily</span>
     </div>
-    <a class="nav-link" href="https://github.com/xjiang16/job-market-tracker" target="_blank" rel="noopener">Source ↗</a>
+    <div class="nav-links">
+      <a class="nav-link" href="https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml" target="_blank" rel="noopener">Last run ↗</a>
+      <a class="nav-link" href="https://github.com/xjiang16/job-market-tracker" target="_blank" rel="noopener">Source ↗</a>
+    </div>
   </div>
 </nav>
 
 <header class="hero">
   <div class="wrap">
     <h1>What do data engineering postings actually ask for?</h1>
+    <div class="accent-rule"></div>
     <p class="lede">
       A pipeline that pulls live postings from the <code>Adzuna API</code>, lands them in
-      <code>Snowflake</code>, and mines them with <code>dbt</code> — orchestrated daily with
-      <code>Airflow</code>. Below is a real query against the current dataset.
+      <code>Snowflake</code>, and mines them with <code>dbt</code> — orchestrated with
+      <code>Airflow</code> and refreshed automatically every day via a scheduled GitHub Actions
+      workflow. Below is a real query against the current dataset.
     </p>
 
     <div class="terminal">
@@ -364,10 +426,13 @@
 <span class="cm" id="query-comment">-- scanning current postings, deduplicated by job_id&hellip;</span></pre>
 
       <div class="results" id="results">
-        <p class="results-caption" id="results-caption">RESULTS &middot; loading&hellip;</p>
+        <div class="results-caption-row">
+          <p class="results-caption" id="results-caption">RESULTS &middot; loading&hellip;</p>
+          <a class="raw-link" href="data.json" target="_blank" rel="noopener">View raw data →</a>
+        </div>
         <div id="bar-rows"><!-- populated from data.json --></div>
         <p class="load-error" id="load-error" hidden>
-          Couldn't load live results right now — check back shortly, or see the
+          Couldn't load current results right now — check back shortly, or see the
           <a href="https://github.com/xjiang16/job-market-tracker">GitHub repo</a> for the latest run.
         </p>
       </div>
@@ -390,9 +455,10 @@
     </div>
     <p class="findings-note">
       This is an early, growing sample built while actively job hunting for data engineering roles. Numbers above
-      reflect the most recent pipeline run, refreshed periodically — not a live per-visit query, since that would
-      mean exposing database credentials publicly and burning warehouse credits on every page view. Broader keyword
-      coverage and more accumulated days of data will keep sharpening these numbers over time.
+      come from a <a href="https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml">scheduled GitHub Actions workflow</a>
+      that runs the full pipeline once a day and commits a fresh snapshot — not a live per-visit query, since that
+      would mean exposing database credentials publicly and burning warehouse credits on every page view. Broader
+      keyword coverage and more accumulated days of data will keep sharpening these numbers over time.
     </p>
   </div>
 </section>
@@ -426,7 +492,7 @@
         <span class="step-num">04</span>
         <div>
           <p class="step-title">ORCHESTRATE</p>
-          <p class="step-desc">Airflow runs the full pipeline on a schedule, in dependency order, without manual steps.</p>
+          <p class="step-desc">Airflow runs the full pipeline locally in dependency order; a scheduled GitHub Actions workflow refreshes the public snapshot daily.</p>
         </div>
       </div>
     </div>
@@ -435,6 +501,7 @@
       <span class="stack-pill">Snowflake</span>
       <span class="stack-pill">dbt</span>
       <span class="stack-pill">Airflow</span>
+      <span class="stack-pill">GitHub Actions</span>
       <span class="stack-pill">Adzuna API</span>
     </div>
   </div>
