@@ -1,11 +1,11 @@
 {
-  "last_updated": "2026-07-22",
-  "total_postings": 103,
+  "last_updated": "2026-07-23",
+  "total_postings": 104,
   "skills": [
     {
       "label": "SQL",
       "count": 13,
-      "pct": 12.6
+      "pct": 12.5
     },
     {
       "label": "Python",
@@ -28,6 +28,6 @@
       "pct": 1.0
     }
   ],
-  "none_mentioned": 86,
-  "none_mentioned_pct": 83.5
+  "none_mentioned": 87,
+  "none_mentioned_pct": 83.7
 }
