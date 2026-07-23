@@ -7,7 +7,7 @@ name: Refresh Job Market Tracker Data
 
 on:
   schedule:
-    - cron: "0 12 * * *"   # 12:00 UTC daily (~7am Central) — adjust as you like
+    - cron: "0 7 * * *"   # 2:00 AM CDT (UTC-5) — currently in effect
   workflow_dispatch: {}
 
 permissions:
