@@ -24,7 +24,6 @@
   }
 
   * { box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
 
   body {
@@ -42,16 +41,10 @@
     outline-offset: 3px;
   }
 
-  .wrap {
-    max-width: 880px;
-    margin: 0 auto;
-    padding: 0 24px;
-  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
 
   /* ---------- Nav ---------- */
-  nav.top {
-    border-bottom: 1px solid var(--border);
-  }
+  nav.top { border-bottom: 1px solid var(--border); }
   nav.top .wrap {
     display: flex;
     align-items: center;
@@ -84,20 +77,12 @@
     gap: 6px;
   }
   .pulse-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
+    width: 6px; height: 6px; border-radius: 50%;
     background: var(--teal);
     animation: pulse 2s ease-in-out infinite;
   }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.35; }
-  }
-  .nav-links {
-    display: flex;
-    gap: 8px;
-  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  .nav-links { display: flex; gap: 8px; }
   .nav-link {
     font-family: var(--mono);
     font-size: 13px;
@@ -111,9 +96,7 @@
   .nav-link:hover { color: var(--teal); border-color: var(--teal); }
 
   /* ---------- Hero ---------- */
-  header.hero {
-    padding: 64px 0 40px;
-  }
+  header.hero { padding: 64px 0 40px; }
   h1 {
     font-family: var(--sans);
     font-weight: 700;
@@ -124,18 +107,11 @@
     max-width: 20ch;
   }
   .accent-rule {
-    width: 48px;
-    height: 3px;
-    border-radius: 2px;
+    width: 48px; height: 3px; border-radius: 2px;
     background: linear-gradient(90deg, var(--teal), var(--amber));
     margin: 0 0 20px;
   }
-  .lede {
-    color: var(--text-dim);
-    font-size: 16px;
-    max-width: 58ch;
-    margin: 0 0 40px;
-  }
+  .lede { color: var(--text-dim); font-size: 16px; max-width: 58ch; margin: 0 0 40px; }
   .lede code {
     font-family: var(--mono);
     background: var(--bg-raised);
@@ -145,125 +121,70 @@
   }
 
   /* ---------- Query block ---------- */
-  .terminal {
-    background: var(--bg-code);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  .terminal-bar {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-  }
+  .terminal { background: var(--bg-code); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .terminal-bar { display: flex; align-items: center; gap: 6px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
   .dot { width: 9px; height: 9px; border-radius: 50%; background: #2a3844; }
-  .terminal-label {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-faint);
-    margin-left: 8px;
-  }
+  .terminal-label { font-family: var(--mono); font-size: 11px; color: var(--text-faint); margin-left: 8px; }
   pre.query {
-    margin: 0;
-    padding: 20px 22px;
-    font-family: var(--mono);
-    font-size: 13.5px;
-    line-height: 1.7;
-    color: #c7d3dd;
-    overflow-x: auto;
+    margin: 0; padding: 20px 22px;
+    font-family: var(--mono); font-size: 13.5px; line-height: 1.7;
+    color: #c7d3dd; overflow-x: auto;
   }
   .kw { color: var(--teal); }
   .cm { color: var(--text-faint); }
 
   /* ---------- Results ---------- */
-  .results {
-    padding: 22px 22px 26px;
-  }
+  .results { padding: 22px 22px 26px; }
   .results-caption-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 0 0 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 8px; margin: 0 0 18px;
   }
-  .results-caption {
-    font-family: var(--mono);
-    font-size: 11.5px;
-    color: var(--text-faint);
-    margin: 0;
-  }
+  .results-caption { font-family: var(--mono); font-size: 11.5px; color: var(--text-faint); margin: 0; }
   .raw-link {
-    font-family: var(--mono);
-    font-size: 11.5px;
-    color: var(--text-faint);
-    text-decoration: none;
-    border-bottom: 1px dashed var(--border);
+    font-family: var(--mono); font-size: 11.5px; color: var(--text-faint);
+    text-decoration: none; border-bottom: 1px dashed var(--border);
   }
   .raw-link:hover { color: var(--teal); border-color: var(--teal); }
-  .bar-row {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 14px;
-  }
+  .bar-row { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
   .bar-label {
-    font-family: var(--mono);
-    font-size: 12.5px;
-    color: var(--text-dim);
-    width: 100px;
-    flex-shrink: 0;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+    font-family: var(--mono); font-size: 12.5px; color: var(--text-dim);
+    width: 100px; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.03em;
   }
-  .bar-track {
-    flex: 1;
-    height: 10px;
-    background: var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-  }
+  .bar-track { flex: 1; height: 10px; background: var(--border); border-radius: 3px; overflow: hidden; }
   .bar-fill {
-    height: 100%;
-    width: 0%;
+    height: 100%; width: 0%;
     background: linear-gradient(90deg, var(--teal), var(--amber));
     border-radius: 3px;
     transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .bar-value {
-    font-family: var(--mono);
-    font-size: 12.5px;
-    color: var(--text-faint);
-    width: 84px;
-    text-align: right;
-    flex-shrink: 0;
-  }
-  .load-error {
-    font-size: 13px;
-    color: var(--text-faint);
-    margin: 6px 0 0;
-  }
+  .bar-value { font-family: var(--mono); font-size: 12.5px; color: var(--text-faint); width: 84px; text-align: right; flex-shrink: 0; }
+  .load-error { font-size: 13px; color: var(--text-faint); margin: 6px 0 0; }
   .load-error a { color: var(--teal); }
 
-  /* ---------- Stat cards ---------- */
+  /* ---------- Findings ---------- */
   section.findings { padding: 56px 0; border-top: 1px solid var(--border); }
-  h2 {
-    font-family: var(--sans);
-    font-size: 22px;
-    font-weight: 700;
-    margin: 0 0 22px;
-  }
-  .stat-grid {
+  h2 { font-family: var(--sans); font-size: 22px; font-weight: 700; margin: 0 0 22px; }
+
+  .findings-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
+    grid-template-columns: 1fr 220px;
+    gap: 32px;
+    align-items: start;
+    margin-bottom: 20px;
   }
-  @media (max-width: 600px) {
-    .stat-grid { grid-template-columns: 1fr; }
+  @media (max-width: 700px) {
+    .findings-layout { grid-template-columns: 1fr; }
   }
+
+  .stat-total { margin-bottom: 18px; }
+  .stat-total-number { font-family: var(--mono); font-size: 44px; font-weight: 500; color: var(--text); line-height: 1; }
+  .stat-total-label {
+    font-family: var(--mono); font-size: 12px; color: var(--text-faint);
+    margin-top: 6px; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 500px) { .stat-grid { grid-template-columns: 1fr; } }
   .stat-card {
     background: var(--bg-raised);
     border: 1px solid var(--border);
@@ -271,31 +192,39 @@
     padding: 22px;
     transition: transform 0.18s ease, border-color 0.18s ease;
   }
-  .stat-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--teal);
-  }
+  .stat-card:hover { transform: translateY(-2px); border-color: var(--teal); }
   .stat-card.warm:hover { border-color: var(--amber); }
-  .stat-number {
-    font-family: var(--mono);
-    font-size: 34px;
-    font-weight: 500;
-    color: var(--teal);
-    margin-bottom: 8px;
-  }
+  .stat-number { font-family: var(--mono); font-size: 34px; font-weight: 500; color: var(--teal); margin-bottom: 8px; }
   .stat-card.warm .stat-number { color: var(--amber); }
-  .stat-desc {
-    color: var(--text-dim);
+  .stat-desc { color: var(--text-dim); font-size: 14px; line-height: 1.5; }
+
+  .findings-insight {
     font-size: 14px;
-    line-height: 1.5;
+    color: var(--text-dim);
+    margin: 18px 0 0;
+    padding: 14px 16px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--teal);
+    border-radius: 4px;
   }
-  .findings-note {
-    color: var(--text-faint);
-    font-size: 13.5px;
-    line-height: 1.6;
-    max-width: 66ch;
-    margin: 0;
+
+  .findings-ring { position: relative; width: 140px; height: 140px; margin: 0 auto; }
+  .ring-svg { width: 140px; height: 140px; transform: rotate(-90deg); }
+  .ring-track { fill: none; stroke: var(--border); stroke-width: 12; }
+  .ring-fill {
+    fill: none; stroke: var(--teal); stroke-width: 12; stroke-linecap: round;
+    transition: stroke-dashoffset 1.1s cubic-bezier(0.16, 1, 0.3, 1);
   }
+  .ring-center {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+  }
+  .ring-pct { font-family: var(--mono); font-size: 26px; font-weight: 500; color: var(--text); }
+  .ring-label { font-family: var(--mono); font-size: 10px; color: var(--text-faint); max-width: 90px; line-height: 1.3; margin-top: 4px; }
+
+  .findings-note { color: var(--text-faint); font-size: 13.5px; line-height: 1.6; max-width: 66ch; margin: 0; }
   .findings-note a { color: var(--text-faint); text-decoration-color: var(--border); }
   .findings-note a:hover { color: var(--teal); }
 
@@ -303,84 +232,35 @@
   section.pipeline { padding: 56px 0; border-top: 1px solid var(--border); }
   .steps { display: flex; flex-direction: column; }
   .step {
-    display: flex;
-    gap: 20px;
-    padding: 18px 14px;
-    margin: 0 -14px;
-    border-bottom: 1px solid var(--border);
-    border-radius: 6px;
+    display: flex; gap: 20px; padding: 18px 14px; margin: 0 -14px;
+    border-bottom: 1px solid var(--border); border-radius: 6px;
     transition: background 0.15s ease;
   }
   .step:hover { background: var(--bg-raised); }
   .step:last-child { border-bottom: none; }
-  .step-num {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--text-faint);
-    width: 28px;
-    flex-shrink: 0;
-    padding-top: 2px;
-  }
-  .step-title {
-    font-family: var(--mono);
-    font-size: 13px;
-    letter-spacing: 0.03em;
-    color: var(--teal);
-    margin: 0 0 4px;
-  }
-  .step-desc {
-    color: var(--text-dim);
-    font-size: 14.5px;
-    margin: 0;
-  }
-  .stack-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 28px;
-  }
+  .step-num { font-family: var(--mono); font-size: 13px; color: var(--text-faint); width: 28px; flex-shrink: 0; padding-top: 2px; }
+  .step-title { font-family: var(--mono); font-size: 13px; letter-spacing: 0.03em; color: var(--teal); margin: 0 0 4px; }
+  .step-desc { color: var(--text-dim); font-size: 14.5px; margin: 0; }
+  .stack-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
   .stack-pill {
-    font-family: var(--mono);
-    font-size: 11.5px;
-    color: var(--text-dim);
-    border: 1px solid var(--border);
-    padding: 5px 10px;
-    border-radius: 4px;
+    font-family: var(--mono); font-size: 11.5px; color: var(--text-dim);
+    border: 1px solid var(--border); padding: 5px 10px; border-radius: 4px;
   }
 
   /* ---------- Footer ---------- */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 32px 0 48px;
-  }
-  .footer-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
+  footer { border-top: 1px solid var(--border); padding: 32px 0 48px; }
+  .footer-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
   .btn {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--bg);
-    background: var(--teal);
-    text-decoration: none;
-    padding: 10px 16px;
-    border-radius: 5px;
-    font-weight: 500;
-    transition: opacity 0.15s ease;
+    font-family: var(--mono); font-size: 13px; color: var(--bg);
+    background: var(--teal); text-decoration: none; padding: 10px 16px;
+    border-radius: 5px; font-weight: 500; transition: opacity 0.15s ease;
   }
   .btn:hover { opacity: 0.85; }
-  .footer-meta {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--text-faint);
-  }
+  .footer-meta { font-family: var(--mono); font-size: 12px; color: var(--text-faint); }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .bar-fill { transition: none; }
+    .bar-fill, .ring-fill { transition: none; }
     .pulse-dot { animation: none; }
     .stat-card, .step { transition: none; }
   }
@@ -443,16 +323,41 @@
 <section class="findings">
   <div class="wrap">
     <h2>What the data shows</h2>
-    <div class="stat-grid">
-      <div class="stat-card">
-        <div class="stat-number" id="stat-top-pct">&mdash;</div>
-        <div class="stat-desc" id="stat-top-desc">Loading current numbers&hellip;</div>
+
+    <div class="findings-layout">
+      <div class="findings-stats">
+        <div class="stat-total">
+          <div class="stat-total-number" id="stat-total-number">&mdash;</div>
+          <div class="stat-total-label">postings scanned to date</div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="stat-top-pct">&mdash;</div>
+            <div class="stat-desc" id="stat-top-desc">Loading current numbers&hellip;</div>
+          </div>
+          <div class="stat-card warm">
+            <div class="stat-number" id="stat-none-pct">&mdash;</div>
+            <div class="stat-desc" id="stat-none-desc">Loading current numbers&hellip;</div>
+          </div>
+        </div>
+
+        <p class="findings-insight" id="findings-insight">Loading comparison&hellip;</p>
       </div>
-      <div class="stat-card warm">
-        <div class="stat-number" id="stat-none-pct">&mdash;</div>
-        <div class="stat-desc" id="stat-none-desc">Loading current numbers&hellip;</div>
+
+      <div class="findings-ring">
+        <svg viewBox="0 0 140 140" class="ring-svg" role="img" aria-label="Share of postings naming at least one tracked tool">
+          <circle class="ring-track" cx="70" cy="70" r="58"></circle>
+          <circle class="ring-fill" id="ring-fill" cx="70" cy="70" r="58"
+                  stroke-dasharray="364.42" stroke-dashoffset="364.42"></circle>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-pct" id="ring-pct">&mdash;</div>
+          <div class="ring-label">name a specific tool</div>
+        </div>
       </div>
     </div>
+
     <p class="findings-note">
       This is an early, growing sample built while actively job hunting for data engineering roles. Numbers above
       come from a <a href="https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml">scheduled GitHub Actions workflow</a>
@@ -517,6 +422,7 @@
 <script>
   (function () {
     var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var RING_CIRCUMFERENCE = 364.42;
 
     function formatDate(iso) {
       try {
@@ -524,6 +430,23 @@
         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       } catch (e) {
         return iso;
+      }
+    }
+
+    function renderInsight(skills) {
+      var el = document.getElementById('findings-insight');
+      var s0 = skills[0], s1 = skills[1];
+      if (s0 && s0.count > 0 && s1 && s1.count > 0) {
+        var ratio = Math.round((s0.count / s1.count) * 10) / 10;
+        if (ratio >= 1.15) {
+          el.textContent = s0.label + ' is named about ' + ratio + '\u00d7 as often as ' + s1.label + ' in this sample.';
+        } else {
+          el.textContent = s0.label + ' and ' + s1.label + ' are named at similar rates in this sample.';
+        }
+      } else if (s0 && s0.count > 0) {
+        el.textContent = s0.label + ' is the only tracked tool with any mentions so far.';
+      } else {
+        el.textContent = 'None of the tracked tools have shown up by name yet in this sample.';
       }
     }
 
@@ -555,23 +478,48 @@
       document.getElementById('stat-none-desc').textContent =
         'mention none of the five tracked tools by name, describing responsibilities in general terms instead.';
 
-      if (prefersReduced) {
+      document.getElementById('stat-total-number').textContent = data.total_postings;
+
+      var anyPct = Math.round((100 - data.none_mentioned_pct) * 10) / 10;
+      document.getElementById('ring-pct').textContent = anyPct + '%';
+      var ringOffset = RING_CIRCUMFERENCE * (1 - anyPct / 100);
+      document.getElementById('ring-fill').setAttribute('data-offset', ringOffset);
+
+      renderInsight(data.skills);
+
+      function playAnimations() {
         document.querySelectorAll('.bar-fill').forEach(function (el) {
           el.style.width = el.getAttribute('data-pct') + '%';
         });
+        var ringFill = document.getElementById('ring-fill');
+        ringFill.style.strokeDashoffset = ringFill.getAttribute('data-offset');
+      }
+
+      if (prefersReduced) {
+        playAnimations();
       } else {
         var target = document.getElementById('results');
         var observer = new IntersectionObserver(function (entries) {
           entries.forEach(function (entry) {
             if (entry.isIntersecting) {
-              document.querySelectorAll('.bar-fill').forEach(function (el) {
-                el.style.width = el.getAttribute('data-pct') + '%';
-              });
+              playAnimations();
               observer.disconnect();
             }
           });
         }, { threshold: 0.3 });
         observer.observe(target);
+
+        var ringTarget = document.querySelector('.findings-ring');
+        var ringObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              var ringFill = document.getElementById('ring-fill');
+              ringFill.style.strokeDashoffset = ringFill.getAttribute('data-offset');
+              ringObserver.disconnect();
+            }
+          });
+        }, { threshold: 0.3 });
+        ringObserver.observe(ringTarget);
       }
     }
 
