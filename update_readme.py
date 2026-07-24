@@ -24,6 +24,7 @@ total = data["total_postings"]
 none_ct = data["none_mentioned"]
 none_pct = data["none_mentioned_pct"]
 top = skills[0]
+tool_count = len(skills)
 
 table_rows = "\n".join(
     f"| {s['label']} | {s['count']} {plural(s['count'])} | {s['pct']}% |"
@@ -38,8 +39,6 @@ Current snapshot (updated {today}): **{total} postings** after deduplication.
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
 {table_rows}
-
-tool_count = len(skills)
 
 The most notable finding is that **{none_pct}% of postings ({none_ct} out of {total}) mention none of the {tool_count} tracked tools explicitly**.
 
