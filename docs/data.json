@@ -1,33 +1,33 @@
 {
-  "last_updated": "2026-07-30",
-  "total_postings": 133,
+  "last_updated": "2026-07-31",
+  "total_postings": 138,
   "skills": [
     {
       "label": "SQL",
       "count": 24,
-      "pct": 18.0
+      "pct": 17.4
     },
     {
       "label": "Python",
       "count": 9,
-      "pct": 6.8
+      "pct": 6.5
     },
     {
       "label": "Snowflake",
       "count": 5,
-      "pct": 3.8
+      "pct": 3.6
     },
     {
       "label": "Airflow",
       "count": 4,
-      "pct": 3.0
+      "pct": 2.9
     },
     {
       "label": "dbt",
       "count": 1,
-      "pct": 0.8
+      "pct": 0.7
     }
   ],
-  "none_mentioned": 103,
-  "none_mentioned_pct": 77.4
+  "none_mentioned": 108,
+  "none_mentioned_pct": 78.3
 }
