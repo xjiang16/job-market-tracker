@@ -89,19 +89,19 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated August 02, 2026): **148 postings** after deduplication.
+Current snapshot (updated August 03, 2026): **150 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
-| SQL | 24 postings | 16.2% |
-| Python | 9 postings | 6.1% |
-| Snowflake | 5 postings | 3.4% |
+| SQL | 24 postings | 16.0% |
+| Python | 9 postings | 6.0% |
+| Snowflake | 5 postings | 3.3% |
 | Airflow | 4 postings | 2.7% |
-| dbt | 2 postings | 1.4% |
+| dbt | 2 postings | 1.3% |
 
-The most notable finding is that **79.1% of postings (117 out of 148) mention none of the 5 tracked tools explicitly**.
+The most notable finding is that **79.3% of postings (119 out of 150) mention none of the 5 tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the five tracked tools, **SQL** appears most often in this sample (16.2%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the five tracked tools, **SQL** appears most often in this sample (16.0%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->
