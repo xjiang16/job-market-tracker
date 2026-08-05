@@ -45,9 +45,31 @@ See [`demo/README.md`](demo/README.md) for what this does and doesn't prove.
 
 
 
+## Local frontend preview
+
+`docs/index.html` is a plain static file — no build step, no framework. Preview a
+visual change (a new chart, a layout tweak) locally instead of waiting on a GitHub
+Pages deploy:
+
+```bash
+cd docs
+python3 -m http.server 8000
+```
+
+Then open `http://localhost:8000`. Opening the file directly (double-click, or a
+`file://` URL) won't work — the page loads `data.json` and `data_history.json` via
+`fetch()`, which browsers block from a `file://` origin under CORS.
+
+To preview a specific change to the trends chart before real history has
+accumulated, temporarily drop a few sample rows into `docs/data_history.json`,
+refresh the browser tab, then revert the file before committing.
+
+
+
 ## Table of Contents
 
 - [Local demo (no Snowflake needed)](#local-demo-no-snowflake-needed)
+- [Local frontend preview](#local-frontend-preview)
 - [Architecture](#architecture)
 - [What the data shows](#what-the-data-shows)
 - [Tech stack](#tech-stack)
