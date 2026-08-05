@@ -35,6 +35,7 @@ Built to answer one question:
 - [Setup](#setup)
 - [Running the pipeline](#running-the-pipeline)
 - [Data quality](#data-quality)
+- [Testing](#testing)
 - [Roadmap](#roadmap)
 - [What I learned building this](#what-i-learned-building-this)
 
@@ -128,11 +129,21 @@ job-market-tracker/
 ├── ingest.py
 ├── load_to_snowflake.py
 ├── export_results.py
+├── update_readme.py
 ├── requirements.txt
+├── requirements-dev.txt
+├── pytest.ini
+├── .coveragerc
 ├── .env.example
 ├── .github/
 │   └── workflows/
-│       └── refresh-results.yml
+│       ├── refresh-results.yml
+│       └── ci.yml
+├── tests/
+│   ├── test_ingest.py
+│   ├── test_export_results.py
+│   ├── test_load_to_snowflake.py
+│   └── test_update_readme.py
 ├── data/
 │   └── raw/
 ├── job_market_tracker_dbt/
@@ -140,10 +151,12 @@ job-market-tracker/
 │   │   ├── sources.yml
 │   │   ├── schema.yml
 │   │   ├── stg_job_postings.sql
-│   │   └── job_skills.sql
+│   │   ├── job_skills.sql
+│   │   └── skill_trends.sql
 ├── docs/
 │   ├── index.html
-│   └── data.json
+│   ├── data.json
+│   └── data_history.json
 └── README.md
 ```
 
@@ -381,6 +394,38 @@ Duplicate records are preserved in the raw table so transformations can be rerun
 
 
 
+## Testing
+
+This project has three layers of testing, each covering something different:
+
+| Layer | What it checks | Runs where | Needs credentials |
+|---|---|---|---|
+| Unit tests (`pytest`) | Code logic — retry behavior, percentage math, row-building, templating | Every PR + locally | No |
+| `dbt parse` | The dbt project compiles (no syntax/ref errors) | Every PR + locally | No |
+| `dbt test` | Real transformed data — `not_null`, `unique` | Daily production run only | Yes |
+
+### Running tests locally
+
+```bash
+pip install -r requirements-dev.txt
+pytest -v
+```
+
+Coverage is enforced automatically — `pytest.ini` sets `--cov --cov-fail-under=100`, scoped via `.coveragerc` to `ingest.py`, `export_results.py`, `load_to_snowflake.py`, and `update_readme.py` — so the suite fails if new logic ships without a test.
+
+```bash
+cd job_market_tracker_dbt
+
+dbt parse   # validates the project compiles; no warehouse connection needed
+dbt test    # validates real data; needs a real ~/.dbt/profiles.yml
+```
+
+### Continuous integration
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `pytest` and `dbt parse` on every pull request and on pushes to `main`. Neither step touches the real warehouse, so it runs without any secrets configured. This is separate from [`refresh-results.yml`](.github/workflows/refresh-results.yml), the daily production pipeline, which is the only workflow that runs `dbt test` against real data.
+
+
+
 ## Roadmap
 
 - [x] Adzuna ingestion
@@ -391,6 +436,8 @@ Duplicate records are preserved in the raw table so transformations can be rerun
 - [x] dbt tests
 - [x] Airflow orchestration
 - [x] Public results page
+- [x] Automated test suite (pytest, 100% coverage) + CI on every PR
+- [x] Skill-mention trends over time
 
 ## Potential Improvements
 - [ ] Larger keyword/location coverage
