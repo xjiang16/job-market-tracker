@@ -71,5 +71,5 @@ def update_readme(data_path="docs/data.json", readme_path="README.md"):
     print("README.md results section updated.")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     update_readme()

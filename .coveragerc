@@ -1,0 +1,7 @@
+[run]
+source = ingest,export_results,load_to_snowflake,update_readme
+
+[report]
+exclude_lines =
+    pragma: no cover
+show_missing = true
