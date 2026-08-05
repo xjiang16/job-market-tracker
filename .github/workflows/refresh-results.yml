@@ -11,7 +11,8 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: write   # needed so the workflow can commit the refreshed data.json back
+  contents: write
+  pull-requests: write
 
 jobs:
   refresh:
@@ -84,10 +85,28 @@ jobs:
       - name: Update README statistics
         run: python update_readme.py
       
-      - name: Commit and push updated results
+      - name: Commit and open PR with updated results
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git diff --cached --quiet || git commit -m "Automated daily results refresh"
-          git push
+
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          BRANCH="auto/results-refresh-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$BRANCH"
+          git add docs/data.json README.md
+          git commit -m "Automated daily results refresh"
+          git push origin "$BRANCH"
+
+          gh pr create --title "Automated daily results refresh" \
+                       --body "Automated update of docs/data.json and README stats." \
+                       --base main --head "$BRANCH"
+
+          gh pr merge "$BRANCH" --squash --auto
+        
+          
