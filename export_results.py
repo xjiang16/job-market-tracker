@@ -13,19 +13,7 @@ from datetime import date
 import snowflake.connector
 from dotenv import load_dotenv
 
-load_dotenv()
-
-conn = snowflake.connector.connect(
-    account=os.environ["SNOWFLAKE_ACCOUNT"],
-    user=os.environ["SNOWFLAKE_USER"],
-    password=os.environ["SNOWFLAKE_PASSWORD"],
-    warehouse=os.environ["SNOWFLAKE_WAREHOUSE"],
-    database=os.environ["SNOWFLAKE_DATABASE"],
-    schema=os.environ["SNOWFLAKE_SCHEMA"],
-)
-cursor = conn.cursor()
-
-query = """
+QUERY = """
     SELECT
         SUM(CASE WHEN mentions_python THEN how_many ELSE 0 END) AS python,
         SUM(CASE WHEN mentions_sql THEN how_many ELSE 0 END) AS sql,
@@ -44,35 +32,60 @@ query = """
     )
 """
 
-cursor.execute(query)
-row = cursor.fetchone()
-python, sql, airflow, snowflake_ct, dbt, total, none_mentioned = row
 
-def pct(n):
+def pct(n, total):
     return round((n / total) * 100, 1) if total else 0
 
-data = {
-    "last_updated": date.today().isoformat(),
-    "total_postings": total,
-    "skills": [
-        {"label": "SQL", "count": sql, "pct": pct(sql)},
-        {"label": "Python", "count": python, "pct": pct(python)},
-        {"label": "Snowflake", "count": snowflake_ct, "pct": pct(snowflake_ct)},
-        {"label": "Airflow", "count": airflow, "pct": pct(airflow)},
-        {"label": "dbt", "count": dbt, "pct": pct(dbt)},
-    ],
-    "none_mentioned": none_mentioned,
-    "none_mentioned_pct": pct(none_mentioned),
-}
 
-# Sort skills descending by count, matching the page's display order
-data["skills"].sort(key=lambda s: s["count"], reverse=True)
+def compute_data(row, today):
+    python, sql, airflow, snowflake_ct, dbt, total, none_mentioned = row
 
-os.makedirs("docs", exist_ok=True)
-with open("docs/data.json", "w") as f:
-    json.dump(data, f, indent=2)
+    data = {
+        "last_updated": today,
+        "total_postings": total,
+        "skills": [
+            {"label": "SQL", "count": sql, "pct": pct(sql, total)},
+            {"label": "Python", "count": python, "pct": pct(python, total)},
+            {"label": "Snowflake", "count": snowflake_ct, "pct": pct(snowflake_ct, total)},
+            {"label": "Airflow", "count": airflow, "pct": pct(airflow, total)},
+            {"label": "dbt", "count": dbt, "pct": pct(dbt, total)},
+        ],
+        "none_mentioned": none_mentioned,
+        "none_mentioned_pct": pct(none_mentioned, total),
+    }
 
-print(f"Wrote docs/data.json — {total} postings, last_updated={data['last_updated']}")
+    # Sort skills descending by count, matching the page's display order
+    data["skills"].sort(key=lambda s: s["count"], reverse=True)
 
-cursor.close()
-conn.close()
+    return data
+
+
+def run():
+    conn = snowflake.connector.connect(
+        account=os.environ["SNOWFLAKE_ACCOUNT"],
+        user=os.environ["SNOWFLAKE_USER"],
+        password=os.environ["SNOWFLAKE_PASSWORD"],
+        warehouse=os.environ["SNOWFLAKE_WAREHOUSE"],
+        database=os.environ["SNOWFLAKE_DATABASE"],
+        schema=os.environ["SNOWFLAKE_SCHEMA"],
+    )
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(QUERY)
+        row = cursor.fetchone()
+        data = compute_data(row, date.today().isoformat())
+
+        os.makedirs("docs", exist_ok=True)
+        with open("docs/data.json", "w") as f:
+            json.dump(data, f, indent=2)
+
+        print(f"Wrote docs/data.json — {data['total_postings']} postings, last_updated={data['last_updated']}")
+    finally:
+        cursor.close()
+        conn.close()
+
+
+if __name__ == "__main__":  # pragma: no cover
+    load_dotenv()
+    run()

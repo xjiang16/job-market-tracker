@@ -1,0 +1,53 @@
+name: CI
+
+# Runs on every PR (and pushes to main) so bugs are caught before merge instead
+# of by the next daily refresh run. Uses no real credentials — pytest mocks all
+# external calls, and `dbt parse` only validates the project compiles, it never
+# connects to the warehouse.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run unit tests
+        run: pytest -v
+
+      - name: Install dbt
+        run: pip install dbt-snowflake
+
+      - name: Validate dbt project compiles
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml << EOF
+          job_market_tracker_dbt:
+            target: dev
+            outputs:
+              dev:
+                type: snowflake
+                account: placeholder
+                user: placeholder
+                password: placeholder
+                role: ACCOUNTADMIN
+                database: JOB_MARKET_TRACKER
+                warehouse: COMPUTE_WH
+                schema: ANALYTICS
+                threads: 4
+          EOF
+          cd job_market_tracker_dbt
+          dbt parse
