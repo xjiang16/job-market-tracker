@@ -1,5 +1,5 @@
 [run]
-source = ingest,export_results,load_to_snowflake,update_readme
+source = ingest,export_results,load_to_snowflake,update_readme,demo.seed
 
 [report]
 exclude_lines =

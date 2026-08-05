@@ -26,8 +26,50 @@ Built to answer one question:
 
 
 
+## Local demo (no Snowflake needed)
+
+The full pipeline needs a Snowflake account and Adzuna API keys — which meant nobody
+without those could ever run the dbt models or check that they actually work, not a
+reviewer, not a contributor, not even CI. `demo/` runs the real, unmodified dbt models
+against [DuckDB](https://duckdb.org/) and small fixture data instead:
+
+```bash
+pip install -r requirements-dev.txt
+python demo/seed.py
+cd job_market_tracker_dbt
+dbt run  --profiles-dir ../demo
+dbt test --profiles-dir ../demo
+```
+
+See [`demo/README.md`](demo/README.md) for what this does and doesn't prove.
+
+
+
+## Local frontend preview
+
+`docs/index.html` is a plain static file — no build step, no framework. Preview a
+visual change (a new chart, a layout tweak) locally instead of waiting on a GitHub
+Pages deploy:
+
+```bash
+cd docs
+python3 -m http.server 8000
+```
+
+Then open `http://localhost:8000`. Opening the file directly (double-click, or a
+`file://` URL) won't work — the page loads `data.json` and `data_history.json` via
+`fetch()`, which browsers block from a `file://` origin under CORS.
+
+To preview a specific change to the trends chart before real history has
+accumulated, temporarily drop a few sample rows into `docs/data_history.json`,
+refresh the browser tab, then revert the file before committing.
+
+
+
 ## Table of Contents
 
+- [Local demo (no Snowflake needed)](#local-demo-no-snowflake-needed)
+- [Local frontend preview](#local-frontend-preview)
 - [Architecture](#architecture)
 - [What the data shows](#what-the-data-shows)
 - [Tech stack](#tech-stack)
@@ -35,6 +77,7 @@ Built to answer one question:
 - [Setup](#setup)
 - [Running the pipeline](#running-the-pipeline)
 - [Data quality](#data-quality)
+- [Testing](#testing)
 - [Roadmap](#roadmap)
 - [What I learned building this](#what-i-learned-building-this)
 
@@ -128,11 +171,26 @@ job-market-tracker/
 ├── ingest.py
 ├── load_to_snowflake.py
 ├── export_results.py
+├── update_readme.py
 ├── requirements.txt
+├── requirements-dev.txt
+├── pytest.ini
+├── .coveragerc
 ├── .env.example
 ├── .github/
 │   └── workflows/
-│       └── refresh-results.yml
+│       ├── refresh-results.yml
+│       └── ci.yml
+├── tests/
+│   ├── test_ingest.py
+│   ├── test_export_results.py
+│   ├── test_load_to_snowflake.py
+│   ├── test_update_readme.py
+│   └── test_demo.py
+├── demo/
+│   ├── seed.py
+│   ├── profiles.yml
+│   └── README.md
 ├── data/
 │   └── raw/
 ├── job_market_tracker_dbt/
@@ -140,10 +198,14 @@ job-market-tracker/
 │   │   ├── sources.yml
 │   │   ├── schema.yml
 │   │   ├── stg_job_postings.sql
-│   │   └── job_skills.sql
+│   │   ├── job_skills.sql
+│   │   └── skill_trends.sql
+│   └── tests/
+│       └── assert_daily_ingest_volume.sql
 ├── docs/
 │   ├── index.html
-│   └── data.json
+│   ├── data.json
+│   └── data_history.json
 └── README.md
 ```
 
@@ -374,10 +436,43 @@ dbt validates the transformed data on every run:
 - `not_null`
 - `unique`
 - One row per `job_id` after deduplication
+- Daily ingest volume — [`assert_daily_ingest_volume.sql`](job_market_tracker_dbt/tests/assert_daily_ingest_volume.sql) fails the run if today's raw ingest looks empty or near-empty, catching a silent Adzuna response (200 OK, no data) that `ingest.py`'s retry logic wouldn't otherwise flag
 
 The raw ingestion layer is intentionally append-only.
 
 Duplicate records are preserved in the raw table so transformations can be rerun later if business logic changes.
+
+
+
+## Testing
+
+This project has three layers of testing, each covering something different:
+
+| Layer | What it checks | Runs where | Needs credentials |
+|---|---|---|---|
+| Unit tests (`pytest`) | Python logic — retry behavior, percentage math, row-building, templating | Every PR + locally | No |
+| dbt integration test (`pytest` + DuckDB) | Real dbt execution — dedup, skill extraction, the `skill_trends` `UNPIVOT`, the daily-volume anomaly test — against fixture data | Every PR + locally | No |
+| `dbt test` (Snowflake) | Real production data | Daily production run only | Yes |
+
+The DuckDB integration test (`tests/test_demo.py`) is what replaced a plain `dbt parse` compile-check — it actually runs the models and asserts on the resulting values, which `dbt parse` never did. See [Local demo](#local-demo-no-snowflake-needed) for what it does and doesn't prove relative to real Snowflake.
+
+### Running tests locally
+
+```bash
+pip install -r requirements-dev.txt
+pytest -v
+```
+
+Coverage is enforced automatically — `pytest.ini` sets `--cov --cov-fail-under=100`, scoped via `.coveragerc` to `ingest.py`, `export_results.py`, `load_to_snowflake.py`, `update_readme.py`, and `demo/seed.py` — so the suite fails if new logic ships without a test.
+
+```bash
+cd job_market_tracker_dbt
+dbt test    # validates real production data; needs a real ~/.dbt/profiles.yml
+```
+
+### Continuous integration
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `pytest` on every pull request and on pushes to `main` — which now includes the DuckDB dbt integration test, so CI validates real dbt execution, not just that the project compiles. No secrets are needed for any of it. This is separate from [`refresh-results.yml`](.github/workflows/refresh-results.yml), the daily production pipeline, which is the only workflow that runs `dbt test` against real Snowflake data.
 
 
 
@@ -391,6 +486,10 @@ Duplicate records are preserved in the raw table so transformations can be rerun
 - [x] dbt tests
 - [x] Airflow orchestration
 - [x] Public results page
+- [x] Automated test suite (pytest, 100% coverage) + CI on every PR
+- [x] Skill-mention trends over time
+- [x] Local DuckDB demo — run and test the real dbt models without a Snowflake account
+- [x] Daily-ingest-volume anomaly test
 
 ## Potential Improvements
 - [ ] Larger keyword/location coverage

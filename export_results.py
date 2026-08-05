@@ -32,6 +32,26 @@ QUERY = """
     )
 """
 
+HISTORY_QUERY = """
+    SELECT snapshot_date, skill, pct
+    FROM skill_trends
+    ORDER BY snapshot_date, skill
+"""
+
+# skill_trends.skill comes from an UNPIVOT over unquoted column names, which
+# Snowflake normalizes to uppercase — map defensively rather than assume case.
+SKILL_LABELS = {
+    "PYTHON": "Python",
+    "SQL": "SQL",
+    "AIRFLOW": "Airflow",
+    "SNOWFLAKE": "Snowflake",
+    "DBT": "dbt",
+}
+
+# Fixed order so a series always renders in the same color across renders,
+# regardless of which skill currently ranks highest.
+SERIES_ORDER = ["Python", "SQL", "Airflow", "Snowflake", "dbt"]
+
 
 def pct(n, total):
     return round((n / total) * 100, 1) if total else 0
@@ -60,6 +80,20 @@ def compute_data(row, today):
     return data
 
 
+def build_history(rows):
+    """rows: iterable of (snapshot_date, skill, pct) from skill_trends, any order."""
+    by_date = {}
+    for snapshot_date, skill, pct_value in rows:
+        label = SKILL_LABELS.get(str(skill).upper())
+        if label is None:
+            continue
+        date_key = snapshot_date.isoformat() if hasattr(snapshot_date, "isoformat") else str(snapshot_date)
+        by_date.setdefault(date_key, {"date": date_key})[label] = pct_value
+
+    history = [by_date[d] for d in sorted(by_date)]
+    return {"series": SERIES_ORDER, "history": history}
+
+
 def run():
     conn = snowflake.connector.connect(
         account=os.environ["SNOWFLAKE_ACCOUNT"],
@@ -76,11 +110,17 @@ def run():
         row = cursor.fetchone()
         data = compute_data(row, date.today().isoformat())
 
+        cursor.execute(HISTORY_QUERY)
+        history = build_history(cursor.fetchall())
+
         os.makedirs("docs", exist_ok=True)
         with open("docs/data.json", "w") as f:
             json.dump(data, f, indent=2)
+        with open("docs/data_history.json", "w") as f:
+            json.dump(history, f, indent=2)
 
         print(f"Wrote docs/data.json — {data['total_postings']} postings, last_updated={data['last_updated']}")
+        print(f"Wrote docs/data_history.json — {len(history['history'])} day(s) of history")
     finally:
         cursor.close()
         conn.close()
