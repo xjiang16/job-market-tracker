@@ -22,7 +22,7 @@ unpivoted AS (
 
 aggregated AS (
     SELECT
-        CURRENT_DATE() AS snapshot_date,
+        CURRENT_DATE AS snapshot_date,
         skill,
         COUNT(*) AS total_postings,
         SUM(mentioned) AS mention_count
