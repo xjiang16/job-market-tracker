@@ -21,6 +21,15 @@
     --teal: #5fd4c4;
     --mono: 'IBM Plex Mono', ui-monospace, monospace;
     --sans: 'Inter', system-ui, sans-serif;
+
+    /* Categorical palette for the trend chart, validated for CVD-safety and
+       contrast against --bg (#0f1720): see project docs for the check. Fixed
+       slot order — a series always gets the same color regardless of rank. */
+    --series-python: #3987e5;
+    --series-sql: #d95926;
+    --series-airflow: #199e70;
+    --series-snowflake: #c98500;
+    --series-dbt: #d55181;
   }
 
   * { box-sizing: border-box; }
@@ -228,6 +237,80 @@
   .findings-note a { color: var(--text-faint); text-decoration-color: var(--border); }
   .findings-note a:hover { color: var(--teal); }
 
+  /* ---------- Trends ---------- */
+  section.trends { padding: 56px 0; border-top: 1px solid var(--border); }
+  .trends-empty { color: var(--text-dim); font-size: 14px; }
+  .trends-chart-wrap { position: relative; }
+  .trends-svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .trend-grid { stroke: var(--border); stroke-width: 1; }
+  .trend-axis-label { font-family: var(--mono); font-size: 10px; fill: var(--text-faint); }
+  .trend-line { stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+  .trend-line-0 { stroke: var(--series-python); }
+  .trend-line-1 { stroke: var(--series-sql); }
+  .trend-line-2 { stroke: var(--series-airflow); }
+  .trend-line-3 { stroke: var(--series-snowflake); }
+  .trend-line-4 { stroke: var(--series-dbt); }
+  .trend-dot-ring { fill: var(--bg); }
+  .trend-dot-0 { fill: var(--series-python); }
+  .trend-dot-1 { fill: var(--series-sql); }
+  .trend-dot-2 { fill: var(--series-airflow); }
+  .trend-dot-3 { fill: var(--series-snowflake); }
+  .trend-dot-4 { fill: var(--series-dbt); }
+  .trend-crosshair { stroke: var(--text-faint); stroke-width: 1; }
+  .trend-hit { cursor: crosshair; }
+  .trend-hit:focus-visible { outline: none; }
+
+  .trend-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 18px; }
+  .trend-legend-item {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: var(--mono); font-size: 12px; color: var(--text-dim);
+  }
+  .trend-legend-key { width: 14px; height: 2px; border-radius: 1px; flex-shrink: 0; }
+  .trend-legend-key-0 { background: var(--series-python); }
+  .trend-legend-key-1 { background: var(--series-sql); }
+  .trend-legend-key-2 { background: var(--series-airflow); }
+  .trend-legend-key-3 { background: var(--series-snowflake); }
+  .trend-legend-key-4 { background: var(--series-dbt); }
+
+  .trend-tooltip {
+    position: absolute; top: 8px;
+    transform: translateX(-50%);
+    background: var(--bg-raised); border: 1px solid var(--border);
+    border-radius: 6px; padding: 10px 12px;
+    font-family: var(--mono); font-size: 12px;
+    pointer-events: none; white-space: nowrap;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  }
+  .trend-tooltip-date {
+    color: var(--text-faint); font-size: 11px; margin-bottom: 6px;
+    text-transform: uppercase; letter-spacing: 0.03em;
+  }
+  .trend-tooltip-row { display: flex; align-items: center; gap: 8px; padding: 2px 0; }
+  .trend-tooltip-key { width: 10px; height: 2px; border-radius: 1px; flex-shrink: 0; }
+  .trend-tooltip-key-0 { background: var(--series-python); }
+  .trend-tooltip-key-1 { background: var(--series-sql); }
+  .trend-tooltip-key-2 { background: var(--series-airflow); }
+  .trend-tooltip-key-3 { background: var(--series-snowflake); }
+  .trend-tooltip-key-4 { background: var(--series-dbt); }
+  .trend-tooltip-value { color: var(--text); font-weight: 600; }
+  .trend-tooltip-label { color: var(--text-faint); }
+
+  .trend-table-details { margin-top: 20px; }
+  .trend-table-summary {
+    font-family: var(--mono); font-size: 12px; color: var(--text-faint);
+    cursor: pointer; user-select: none;
+  }
+  .trend-table-summary:hover { color: var(--teal); }
+  .trend-table-scroll { overflow-x: auto; margin-top: 12px; }
+  table.trend-table { border-collapse: collapse; width: 100%; font-family: var(--mono); font-size: 12px; }
+  table.trend-table th, table.trend-table td {
+    text-align: right; padding: 6px 10px; border-bottom: 1px solid var(--border);
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  table.trend-table th:first-child, table.trend-table td:first-child { text-align: left; }
+  table.trend-table th { color: var(--text-faint); font-weight: 500; }
+  table.trend-table td { color: var(--text-dim); }
+
   /* ---------- Pipeline ---------- */
   section.pipeline { padding: 56px 0; border-top: 1px solid var(--border); }
   .steps { display: flex; flex-direction: column; }
@@ -365,6 +448,35 @@
       would mean exposing database credentials publicly and burning warehouse credits on every page view. Broader
       keyword coverage and more accumulated days of data will keep sharpening these numbers over time.
     </p>
+  </div>
+</section>
+
+<section class="trends">
+  <div class="wrap">
+    <h2>Trends over time</h2>
+
+    <p class="trends-empty" id="trends-empty">
+      Trend data starts accumulating once the pipeline has run on at least two different
+      days — check back soon.
+    </p>
+
+    <div class="trends-chart-wrap" id="trends-chart-wrap" hidden>
+      <div id="trends-chart"></div>
+      <div class="trend-tooltip" id="trend-tooltip" hidden></div>
+      <div class="trend-legend" id="trend-legend"></div>
+
+      <details class="trend-table-details">
+        <summary class="trend-table-summary">View as table</summary>
+        <div class="trend-table-scroll">
+          <table class="trend-table">
+            <thead>
+              <tr id="trend-table-head"></tr>
+            </thead>
+            <tbody id="trend-table-body"></tbody>
+          </table>
+        </div>
+      </details>
+    </div>
   </div>
 </section>
 
@@ -532,6 +644,274 @@
       .catch(function () {
         document.getElementById('load-error').hidden = false;
         document.getElementById('results-caption').textContent = 'RESULTS';
+      });
+  })();
+
+  (function () {
+    var SVG_NS = 'http://www.w3.org/2000/svg';
+    var W = 760, H = 280;
+    var MARGIN = { top: 16, right: 16, bottom: 32, left: 40 };
+    var plotW = W - MARGIN.left - MARGIN.right;
+    var plotH = H - MARGIN.top - MARGIN.bottom;
+
+    function shortDate(iso) {
+      try {
+        var d = new Date(iso + "T00:00:00");
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      } catch (e) {
+        return iso;
+      }
+    }
+
+    function longDate(iso) {
+      try {
+        var d = new Date(iso + "T00:00:00");
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      } catch (e) {
+        return iso;
+      }
+    }
+
+    function niceMax(rawMax) {
+      if (rawMax <= 0) return 10;
+      var steps = [5, 10, 20, 25, 50, 75, 100];
+      for (var i = 0; i < steps.length; i++) {
+        if (rawMax <= steps[i] * 0.85) return steps[i];
+      }
+      return Math.ceil((rawMax * 1.15) / 10) * 10;
+    }
+
+    function pickTickIndexes(n) {
+      if (n <= 6) {
+        var all = [];
+        for (var i = 0; i < n; i++) all.push(i);
+        return all;
+      }
+      var count = 5;
+      var idxs = [];
+      for (var j = 0; j < count; j++) {
+        idxs.push(Math.round((j / (count - 1)) * (n - 1)));
+      }
+      return idxs.filter(function (v, i, arr) { return arr.indexOf(v) === i; });
+    }
+
+    function svgEl(tag, attrs) {
+      var el = document.createElementNS(SVG_NS, tag);
+      for (var key in attrs) {
+        el.setAttribute(key, attrs[key]);
+      }
+      return el;
+    }
+
+    function renderTrends(payload) {
+      var series = payload.series || [];
+      var history = payload.history || [];
+
+      if (history.length < 2) {
+        return; // default empty-state text stays visible
+      }
+
+      var n = history.length;
+      var allValues = [];
+      history.forEach(function (row) {
+        series.forEach(function (s) {
+          if (typeof row[s] === 'number') allValues.push(row[s]);
+        });
+      });
+      var yMax = niceMax(Math.max.apply(null, allValues.concat([0])));
+
+      function xFor(i) { return MARGIN.left + (n === 1 ? 0 : (i / (n - 1)) * plotW); }
+      function yFor(v) { return MARGIN.top + plotH - (v / yMax) * plotH; }
+
+      var svg = svgEl('svg', {
+        viewBox: '0 0 ' + W + ' ' + H,
+        class: 'trends-svg',
+        role: 'img',
+        'aria-label': 'Skill mention percentage trend over time'
+      });
+
+      [0, yMax / 2, yMax].forEach(function (v) {
+        var y = yFor(v);
+        svg.appendChild(svgEl('line', {
+          x1: MARGIN.left, x2: W - MARGIN.right, y1: y, y2: y, class: 'trend-grid'
+        }));
+        var label = svgEl('text', {
+          x: MARGIN.left - 8, y: y + 4, class: 'trend-axis-label', 'text-anchor': 'end'
+        });
+        label.textContent = Math.round(v) + '%';
+        svg.appendChild(label);
+      });
+
+      pickTickIndexes(n).forEach(function (i) {
+        var label = svgEl('text', {
+          x: xFor(i), y: H - MARGIN.bottom + 18, class: 'trend-axis-label', 'text-anchor': 'middle'
+        });
+        label.textContent = shortDate(history[i].date);
+        svg.appendChild(label);
+      });
+
+      series.forEach(function (s, si) {
+        var pts = [];
+        history.forEach(function (row, i) {
+          if (typeof row[s] === 'number') pts.push([i, row[s]]);
+        });
+        if (pts.length === 0) return;
+
+        var d = pts.map(function (p, idx) {
+          var x = xFor(p[0]).toFixed(1), y = yFor(p[1]).toFixed(1);
+          return (idx === 0 ? 'M' : 'L') + x + ' ' + y;
+        }).join(' ');
+        svg.appendChild(svgEl('path', { d: d, class: 'trend-line trend-line-' + si }));
+
+        var last = pts[pts.length - 1];
+        var cx = xFor(last[0]), cy = yFor(last[1]);
+        svg.appendChild(svgEl('circle', { cx: cx, cy: cy, r: 6, class: 'trend-dot-ring' }));
+        svg.appendChild(svgEl('circle', { cx: cx, cy: cy, r: 4, class: 'trend-dot trend-dot-' + si }));
+      });
+
+      var crosshair = svgEl('line', {
+        x1: xFor(n - 1), x2: xFor(n - 1), y1: MARGIN.top, y2: H - MARGIN.bottom,
+        class: 'trend-crosshair'
+      });
+      crosshair.style.display = 'none'; // SVG elements ignore the `hidden` attribute's default UA display:none
+      svg.appendChild(crosshair);
+
+      var hit = svgEl('rect', {
+        x: MARGIN.left, y: MARGIN.top, width: plotW, height: plotH,
+        fill: 'transparent', class: 'trend-hit', tabindex: '0',
+        role: 'slider', 'aria-label': 'Scrub trend chart by date',
+        'aria-valuemin': '0', 'aria-valuemax': String(n - 1)
+      });
+      svg.appendChild(hit);
+
+      var chartContainer = document.getElementById('trends-chart');
+      chartContainer.innerHTML = '';
+      chartContainer.appendChild(svg);
+
+      var tooltip = document.getElementById('trend-tooltip');
+
+      function showTooltipFor(i) {
+        var row = history[i];
+        crosshair.setAttribute('x1', xFor(i));
+        crosshair.setAttribute('x2', xFor(i));
+        crosshair.style.display = '';
+        hit.setAttribute('aria-valuenow', String(i));
+
+        tooltip.textContent = '';
+        var dateEl = document.createElement('div');
+        dateEl.className = 'trend-tooltip-date';
+        dateEl.textContent = longDate(row.date);
+        tooltip.appendChild(dateEl);
+
+        series.forEach(function (s, si) {
+          if (typeof row[s] !== 'number') return;
+          var rowEl = document.createElement('div');
+          rowEl.className = 'trend-tooltip-row';
+
+          var key = document.createElement('span');
+          key.className = 'trend-tooltip-key trend-tooltip-key-' + si;
+
+          var val = document.createElement('span');
+          val.className = 'trend-tooltip-value';
+          val.textContent = row[s] + '%';
+
+          var label = document.createElement('span');
+          label.className = 'trend-tooltip-label';
+          label.textContent = s;
+
+          rowEl.appendChild(key);
+          rowEl.appendChild(val);
+          rowEl.appendChild(label);
+          tooltip.appendChild(rowEl);
+        });
+
+        tooltip.hidden = false;
+        var pct = n === 1 ? 50 : (i / (n - 1)) * 100;
+        tooltip.style.left = Math.max(12, Math.min(88, (MARGIN.left / W * 100) + pct * (plotW / W))) + '%';
+      }
+
+      function hideTooltip() {
+        tooltip.hidden = true;
+        crosshair.style.display = 'none';
+      }
+
+      function indexFromClientX(clientX) {
+        var rect = svg.getBoundingClientRect();
+        var relX = (clientX - rect.left) / rect.width * W;
+        var i = n === 1 ? 0 : Math.round((relX - MARGIN.left) / plotW * (n - 1));
+        return Math.max(0, Math.min(n - 1, i));
+      }
+
+      hit.addEventListener('pointermove', function (evt) {
+        showTooltipFor(indexFromClientX(evt.clientX));
+      });
+      hit.addEventListener('pointerleave', hideTooltip);
+      hit.addEventListener('focus', function () { showTooltipFor(n - 1); });
+      hit.addEventListener('blur', hideTooltip);
+      hit.addEventListener('keydown', function (evt) {
+        var current = parseInt(hit.getAttribute('aria-valuenow') || String(n - 1), 10);
+        if (evt.key === 'ArrowLeft') {
+          showTooltipFor(Math.max(0, current - 1));
+          evt.preventDefault();
+        } else if (evt.key === 'ArrowRight') {
+          showTooltipFor(Math.min(n - 1, current + 1));
+          evt.preventDefault();
+        }
+      });
+
+      var legend = document.getElementById('trend-legend');
+      legend.textContent = '';
+      series.forEach(function (s, si) {
+        var item = document.createElement('span');
+        item.className = 'trend-legend-item';
+        var key = document.createElement('span');
+        key.className = 'trend-legend-key trend-legend-key-' + si;
+        var label = document.createElement('span');
+        label.textContent = s;
+        item.appendChild(key);
+        item.appendChild(label);
+        legend.appendChild(item);
+      });
+
+      var head = document.getElementById('trend-table-head');
+      head.textContent = '';
+      var dateHeadTh = document.createElement('th');
+      dateHeadTh.textContent = 'Date';
+      head.appendChild(dateHeadTh);
+      series.forEach(function (s) {
+        var th = document.createElement('th');
+        th.textContent = s;
+        head.appendChild(th);
+      });
+
+      var body = document.getElementById('trend-table-body');
+      body.textContent = '';
+      history.forEach(function (row) {
+        var tr = document.createElement('tr');
+        var tdDate = document.createElement('td');
+        tdDate.textContent = longDate(row.date);
+        tr.appendChild(tdDate);
+        series.forEach(function (s) {
+          var td = document.createElement('td');
+          td.textContent = typeof row[s] === 'number' ? row[s] + '%' : '—';
+          tr.appendChild(td);
+        });
+        body.appendChild(tr);
+      });
+
+      document.getElementById('trends-empty').hidden = true;
+      document.getElementById('trends-chart-wrap').hidden = false;
+    }
+
+    fetch('data_history.json', { cache: 'no-store' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('bad response');
+        return res.json();
+      })
+      .then(renderTrends)
+      .catch(function () {
+        // default empty-state text stays visible; this endpoint is new and
+        // may not exist yet on an older cached deploy.
       });
   })();
 </script>
