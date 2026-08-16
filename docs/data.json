@@ -1,11 +1,11 @@
 {
-  "last_updated": "2026-08-15",
-  "total_postings": 216,
+  "last_updated": "2026-08-16",
+  "total_postings": 218,
   "skills": [
     {
       "label": "SQL",
       "count": 35,
-      "pct": 16.2
+      "pct": 16.1
     },
     {
       "label": "Python",
@@ -20,7 +20,7 @@
     {
       "label": "Airflow",
       "count": 4,
-      "pct": 1.9
+      "pct": 1.8
     },
     {
       "label": "dbt",
@@ -28,6 +28,6 @@
       "pct": 0.9
     }
   ],
-  "none_mentioned": 172,
-  "none_mentioned_pct": 79.6
+  "none_mentioned": 174,
+  "none_mentioned_pct": 79.8
 }
