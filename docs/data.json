@@ -1,16 +1,16 @@
 {
-  "last_updated": "2026-08-16",
-  "total_postings": 218,
+  "last_updated": "2026-08-17",
+  "total_postings": 219,
   "skills": [
     {
       "label": "SQL",
       "count": 35,
-      "pct": 16.1
+      "pct": 16.0
     },
     {
       "label": "Python",
       "count": 13,
-      "pct": 6.0
+      "pct": 5.9
     },
     {
       "label": "Snowflake",
@@ -28,6 +28,6 @@
       "pct": 0.9
     }
   ],
-  "none_mentioned": 174,
-  "none_mentioned_pct": 79.8
+  "none_mentioned": 175,
+  "none_mentioned_pct": 79.9
 }
