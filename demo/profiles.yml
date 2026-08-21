@@ -1,0 +1,7 @@
+job_market_tracker_dbt:
+  target: duckdb
+  outputs:
+    duckdb:
+      type: duckdb
+      path: 'demo/JOB_MARKET_TRACKER.duckdb'
+      schema: ANALYTICS
