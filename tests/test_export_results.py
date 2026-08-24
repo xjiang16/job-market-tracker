@@ -6,21 +6,29 @@ from unittest.mock import MagicMock, patch
 import export_results
 
 
+def _row(**counts):
+    """Build a query-result row: one count per SKILL_COLUMNS entry (default 0), then total, then none_mentioned."""
+    skill_counts = [counts.get(key, 0) for key, _ in export_results.SKILL_COLUMNS]
+    total = counts.pop("total", sum(skill_counts))
+    none_mentioned = counts.pop("none_mentioned", 0)
+    return (*skill_counts, total, none_mentioned)
+
+
 def test_compute_data_percentages_and_sort_order():
-    # python=2, sql=6, airflow=0, snowflake=1, dbt=1, total=10, none_mentioned=0
-    row = (2, 6, 0, 1, 1, 10, 0)
+    row = _row(python=2, sql=6, snowflake=1, dbt=1, total=10, none_mentioned=0)
 
     data = export_results.compute_data(row, "2026-08-04")
 
     assert data["last_updated"] == "2026-08-04"
     assert data["total_postings"] == 10
-    assert [s["label"] for s in data["skills"]] == ["SQL", "Python", "Snowflake", "dbt", "Airflow"]
+    assert len(data["skills"]) == len(export_results.SKILL_COLUMNS)
+    assert [s["label"] for s in data["skills"][:4]] == ["SQL", "Python", "Snowflake", "dbt"]
     assert data["skills"][0] == {"label": "SQL", "count": 6, "pct": 60.0}
     assert data["none_mentioned_pct"] == 0.0
 
 
 def test_compute_data_handles_zero_total_without_dividing_by_zero():
-    row = (0, 0, 0, 0, 0, 0, 0)
+    row = _row()
 
     data = export_results.compute_data(row, "2026-08-04")
 
@@ -95,7 +103,7 @@ def test_run_writes_docs_data_json_and_history(mock_connect, tmp_path, monkeypat
         monkeypatch.setenv(var, "test")
 
     mock_cursor = MagicMock()
-    mock_cursor.fetchone.return_value = (2, 6, 0, 1, 1, 10, 0)
+    mock_cursor.fetchone.return_value = _row(python=2, sql=6, snowflake=1, dbt=1, total=10, none_mentioned=0)
     mock_cursor.fetchall.return_value = [(date(2026, 8, 1), "SQL", 60.0)]
     mock_conn = MagicMock()
     mock_conn.cursor.return_value = mock_cursor

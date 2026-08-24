@@ -588,7 +588,7 @@
 
       document.getElementById('stat-none-pct').textContent = data.none_mentioned_pct + '%';
       document.getElementById('stat-none-desc').textContent =
-        'mention none of the five tracked tools by name, describing responsibilities in general terms instead.';
+        'mention none of the ' + data.skills.length + ' tracked tools by name, describing responsibilities in general terms instead.';
 
       document.getElementById('stat-total-number').textContent = data.total_postings;
 
