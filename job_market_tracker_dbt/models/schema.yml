@@ -14,3 +14,15 @@ models:
         tests:
           - not_null
           - unique
+
+  - name: skill_trends
+    columns:
+      - name: snapshot_date
+        tests:
+          - not_null
+      - name: skill
+        tests:
+          - not_null
+      - name: pct
+        tests:
+          - not_null
