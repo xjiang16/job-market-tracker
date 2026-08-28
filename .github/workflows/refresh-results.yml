@@ -13,7 +13,11 @@ name: Refresh Job Market Tracker Data
 
 on:
   schedule:
-    - cron: "0 7 * * *"   # 2:00 AM CDT (UTC-5) — currently in effect
+    # Off the top of the hour on purpose: GitHub's own docs note that scheduled
+    # workflows can be delayed or dropped during high load, and load peaks at
+    # :00 every hour. A 2026-08-27/28 run confirmed this — one run landed ~11h
+    # late, the next didn't fire at all.
+    - cron: "17 7 * * *"   # ~2:17 AM CDT (UTC-5) — currently in effect
   workflow_dispatch: {}
 
 permissions:
