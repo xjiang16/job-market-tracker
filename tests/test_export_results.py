@@ -1,5 +1,6 @@
 import json
 from datetime import date
+from decimal import Decimal
 from unittest.mock import MagicMock, patch
 
 import export_results
@@ -72,6 +73,18 @@ def test_build_history_empty_input():
         "series": ["Python", "SQL", "Airflow", "Snowflake", "dbt"],
         "history": [],
     }
+
+
+def test_build_history_output_is_json_serializable_with_real_snowflake_types():
+    # Snowflake returns NUMBER(x,1) columns (like skill_trends.pct) as
+    # decimal.Decimal, not float — using a real Decimal here, instead of a
+    # plain float literal, is what catches json.dump() blowing up on it.
+    rows = [(date(2026, 8, 1), "SQL", Decimal("14.9"))]
+
+    result = export_results.build_history(rows)
+
+    assert result["history"] == [{"date": "2026-08-01", "SQL": 14.9}]
+    json.dumps(result)  # should not raise TypeError: Object of type Decimal is not JSON serializable
 
 
 @patch("export_results.snowflake.connector.connect")
