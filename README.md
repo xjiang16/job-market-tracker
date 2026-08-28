@@ -26,8 +26,28 @@ Built to answer one question:
 
 
 
+## Local demo (no Snowflake needed)
+
+The full pipeline needs a Snowflake account and Adzuna API keys — which meant nobody
+without those could ever run the dbt models or check that they actually work, not a
+reviewer, not a contributor, not even CI. `demo/` runs the real, unmodified dbt models
+against [DuckDB](https://duckdb.org/) and small fixture data instead:
+
+```bash
+pip install -r requirements-dev.txt
+python demo/seed.py
+cd job_market_tracker_dbt
+dbt run  --profiles-dir ../demo
+dbt test --profiles-dir ../demo
+```
+
+See [`demo/README.md`](demo/README.md) for what this does and doesn't prove.
+
+
+
 ## Table of Contents
 
+- [Local demo (no Snowflake needed)](#local-demo-no-snowflake-needed)
 - [Architecture](#architecture)
 - [What the data shows](#what-the-data-shows)
 - [Tech stack](#tech-stack)
@@ -387,6 +407,7 @@ dbt validates the transformed data on every run:
 - `not_null`
 - `unique`
 - One row per `job_id` after deduplication
+- Daily ingest volume — [`assert_daily_ingest_volume.sql`](job_market_tracker_dbt/tests/assert_daily_ingest_volume.sql) fails the run if today's raw ingest looks empty or near-empty, catching a silent Adzuna response (200 OK, no data) that `ingest.py`'s retry logic wouldn't otherwise flag
 
 The raw ingestion layer is intentionally append-only.
 
