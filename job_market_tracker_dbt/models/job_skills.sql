@@ -15,6 +15,14 @@ SELECT
     description ILIKE '%snowflake%' AS mentions_snowflake,
     description ILIKE '%aws%' AS mentions_aws,
     description ILIKE '%spark%' AS mentions_spark,
-    description ILIKE '%kafka%' AS mentions_kafka
+    description ILIKE '%kafka%' AS mentions_kafka,
+    description ILIKE '%redshift%' AS mentions_redshift,
+    description ILIKE '%bigquery%' AS mentions_bigquery,
+    description ILIKE '%gcp%' AS mentions_gcp,
+    description ILIKE '%docker%' AS mentions_docker,
+    description ILIKE '%databricks%' AS mentions_databricks,
+    description ILIKE '%terraform%' AS mentions_terraform,
+    (description ILIKE '%java%' AND description NOT ILIKE '%javascript%') AS mentions_java,
+    (description ILIKE '%scala%' AND description NOT ILIKE '%scalab%') AS mentions_scala
 
 FROM {{ ref('stg_job_postings') }}

@@ -13,22 +13,42 @@ from datetime import date
 import snowflake.connector
 from dotenv import load_dotenv
 
-QUERY = """
+SKILL_COLUMNS = [
+    ("python", "Python"),
+    ("sql", "SQL"),
+    ("airflow", "Airflow"),
+    ("snowflake", "Snowflake"),
+    ("dbt", "dbt"),
+    ("aws", "AWS"),
+    ("spark", "Spark"),
+    ("kafka", "Kafka"),
+    ("redshift", "Redshift"),
+    ("bigquery", "BigQuery"),
+    ("gcp", "GCP"),
+    ("docker", "Docker"),
+    ("databricks", "Databricks"),
+    ("terraform", "Terraform"),
+    ("java", "Java"),
+    ("scala", "Scala"),
+]
+
+_mentions_cols = ", ".join(f"mentions_{key}" for key, _ in SKILL_COLUMNS)
+_sums = ",\n        ".join(
+    f"SUM(CASE WHEN mentions_{key} THEN how_many ELSE 0 END) AS {key}" for key, _ in SKILL_COLUMNS
+)
+_none_condition = " AND ".join(f"NOT mentions_{key}" for key, _ in SKILL_COLUMNS)
+
+QUERY = f"""
     SELECT
-        SUM(CASE WHEN mentions_python THEN how_many ELSE 0 END) AS python,
-        SUM(CASE WHEN mentions_sql THEN how_many ELSE 0 END) AS sql,
-        SUM(CASE WHEN mentions_airflow THEN how_many ELSE 0 END) AS airflow,
-        SUM(CASE WHEN mentions_snowflake THEN how_many ELSE 0 END) AS snowflake,
-        SUM(CASE WHEN mentions_dbt THEN how_many ELSE 0 END) AS dbt,
+        {_sums},
         SUM(how_many) AS total,
-        SUM(CASE WHEN NOT mentions_python AND NOT mentions_sql AND NOT mentions_airflow
-                 AND NOT mentions_snowflake AND NOT mentions_dbt THEN how_many ELSE 0 END) AS none_mentioned
+        SUM(CASE WHEN {_none_condition} THEN how_many ELSE 0 END) AS none_mentioned
     FROM (
         SELECT
-            mentions_python, mentions_sql, mentions_airflow, mentions_snowflake, mentions_dbt,
+            {_mentions_cols},
             COUNT(*) AS how_many
         FROM job_skills
-        GROUP BY 1,2,3,4,5
+        GROUP BY {", ".join(str(i) for i in range(1, len(SKILL_COLUMNS) + 1))}
     )
 """
 
@@ -58,17 +78,14 @@ def pct(n, total):
 
 
 def compute_data(row, today):
-    python, sql, airflow, snowflake_ct, dbt, total, none_mentioned = row
+    *skill_counts, total, none_mentioned = row
 
     data = {
         "last_updated": today,
         "total_postings": total,
         "skills": [
-            {"label": "SQL", "count": sql, "pct": pct(sql, total)},
-            {"label": "Python", "count": python, "pct": pct(python, total)},
-            {"label": "Snowflake", "count": snowflake_ct, "pct": pct(snowflake_ct, total)},
-            {"label": "Airflow", "count": airflow, "pct": pct(airflow, total)},
-            {"label": "dbt", "count": dbt, "pct": pct(dbt, total)},
+            {"label": label, "count": count, "pct": pct(count, total)}
+            for (_, label), count in zip(SKILL_COLUMNS, skill_counts)
         ],
         "none_mentioned": none_mentioned,
         "none_mentioned_pct": pct(none_mentioned, total),

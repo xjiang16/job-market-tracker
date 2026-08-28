@@ -43,7 +43,7 @@ Current snapshot (updated {today}): **{total} postings** after deduplication.
 
 The most notable finding is that **{none_pct}% of postings ({none_ct} out of {total}) mention none of the {tool_count} tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the five tracked tools, **{top['label']}** appears most often in this sample ({top['pct']}%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the {tool_count} tracked tools, **{top['label']}** appears most often in this sample ({top['pct']}%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->"""
