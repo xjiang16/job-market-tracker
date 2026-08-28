@@ -115,14 +115,25 @@ Current snapshot (updated August 28, 2026): **251 postings** after deduplication
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
 | SQL | 36 postings | 14.3% |
+| Databricks | 15 postings | 6.0% |
 | Python | 14 postings | 5.6% |
+| Spark | 12 postings | 4.8% |
 | Snowflake | 11 postings | 4.4% |
+| AWS | 9 postings | 3.6% |
+| Kafka | 5 postings | 2.0% |
+| Scala | 5 postings | 2.0% |
 | Airflow | 4 postings | 1.6% |
 | dbt | 4 postings | 1.6% |
+| Redshift | 1 posting | 0.4% |
+| BigQuery | 1 posting | 0.4% |
+| GCP | 1 posting | 0.4% |
+| Docker | 1 posting | 0.4% |
+| Java | 1 posting | 0.4% |
+| Terraform | 0 postings | 0.0% |
 
-The most notable finding is that **80.9% of postings (203 out of 251) mention none of the 5 tracked tools explicitly**.
+The most notable finding is that **74.1% of postings (186 out of 251) mention none of the 16 tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the five tracked tools, **SQL** appears most often in this sample (14.3%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (14.3%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->
