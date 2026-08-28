@@ -88,7 +88,10 @@ def build_history(rows):
         if label is None:
             continue
         date_key = snapshot_date.isoformat() if hasattr(snapshot_date, "isoformat") else str(snapshot_date)
-        by_date.setdefault(date_key, {"date": date_key})[label] = pct_value
+        # Snowflake returns NUMBER(x,1) columns (like pct) as decimal.Decimal, which
+        # json.dump() can't serialize — convert to float here, at the point it enters
+        # the dict that becomes JSON.
+        by_date.setdefault(date_key, {"date": date_key})[label] = float(pct_value)
 
     history = [by_date[d] for d in sorted(by_date)]
     return {"series": SERIES_ORDER, "history": history}
