@@ -110,19 +110,19 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated August 03, 2026): **150 postings** after deduplication.
+Current snapshot (updated August 27, 2026): **248 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
-| SQL | 24 postings | 16.0% |
-| Python | 9 postings | 6.0% |
-| Snowflake | 5 postings | 3.3% |
-| Airflow | 4 postings | 2.7% |
-| dbt | 2 postings | 1.3% |
+| SQL | 36 postings | 14.5% |
+| Python | 13 postings | 5.2% |
+| Snowflake | 10 postings | 4.0% |
+| Airflow | 4 postings | 1.6% |
+| dbt | 4 postings | 1.6% |
 
-The most notable finding is that **79.3% of postings (119 out of 150) mention none of the 5 tracked tools explicitly**.
+The most notable finding is that **81.0% of postings (201 out of 248) mention none of the 5 tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the five tracked tools, **SQL** appears most often in this sample (16.0%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the five tracked tools, **SQL** appears most often in this sample (14.5%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->
@@ -163,12 +163,7 @@ job-market-tracker/
 │   ├── test_ingest.py
 │   ├── test_export_results.py
 │   ├── test_load_to_snowflake.py
-│   ├── test_update_readme.py
-│   └── test_demo.py
-├── demo/
-│   ├── seed.py
-│   ├── profiles.yml
-│   └── README.md
+│   └── test_update_readme.py
 ├── data/
 │   └── raw/
 ├── job_market_tracker_dbt/
@@ -178,8 +173,6 @@ job-market-tracker/
 │   │   ├── stg_job_postings.sql
 │   │   ├── job_skills.sql
 │   │   └── skill_trends.sql
-│   └── tests/
-│       └── assert_daily_ingest_volume.sql
 ├── docs/
 │   ├── index.html
 │   ├── data.json
@@ -428,11 +421,9 @@ This project has three layers of testing, each covering something different:
 
 | Layer | What it checks | Runs where | Needs credentials |
 |---|---|---|---|
-| Unit tests (`pytest`) | Python logic — retry behavior, percentage math, row-building, templating | Every PR + locally | No |
-| dbt integration test (`pytest` + DuckDB) | Real dbt execution — dedup, skill extraction, the `skill_trends` `UNPIVOT`, the daily-volume anomaly test — against fixture data | Every PR + locally | No |
-| `dbt test` (Snowflake) | Real production data | Daily production run only | Yes |
-
-The DuckDB integration test (`tests/test_demo.py`) is what replaced a plain `dbt parse` compile-check — it actually runs the models and asserts on the resulting values, which `dbt parse` never did. See [Local demo](#local-demo-no-snowflake-needed) for what it does and doesn't prove relative to real Snowflake.
+| Unit tests (`pytest`) | Code logic — retry behavior, percentage math, row-building, templating | Every PR + locally | No |
+| `dbt parse` | The dbt project compiles (no syntax/ref errors) | Every PR + locally | No |
+| `dbt test` | Real transformed data — `not_null`, `unique` | Daily production run only | Yes |
 
 ### Running tests locally
 
@@ -441,16 +432,18 @@ pip install -r requirements-dev.txt
 pytest -v
 ```
 
-Coverage is enforced automatically — `pytest.ini` sets `--cov --cov-fail-under=100`, scoped via `.coveragerc` to `ingest.py`, `export_results.py`, `load_to_snowflake.py`, `update_readme.py`, and `demo/seed.py` — so the suite fails if new logic ships without a test.
+Coverage is enforced automatically — `pytest.ini` sets `--cov --cov-fail-under=100`, scoped via `.coveragerc` to `ingest.py`, `export_results.py`, `load_to_snowflake.py`, and `update_readme.py` — so the suite fails if new logic ships without a test.
 
 ```bash
 cd job_market_tracker_dbt
-dbt test    # validates real production data; needs a real ~/.dbt/profiles.yml
+
+dbt parse   # validates the project compiles; no warehouse connection needed
+dbt test    # validates real data; needs a real ~/.dbt/profiles.yml
 ```
 
 ### Continuous integration
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `pytest` on every pull request and on pushes to `main` — which now includes the DuckDB dbt integration test, so CI validates real dbt execution, not just that the project compiles. No secrets are needed for any of it. This is separate from [`refresh-results.yml`](.github/workflows/refresh-results.yml), the daily production pipeline, which is the only workflow that runs `dbt test` against real Snowflake data.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `pytest` and `dbt parse` on every pull request and on pushes to `main`. Neither step touches the real warehouse, so it runs without any secrets configured. This is separate from [`refresh-results.yml`](.github/workflows/refresh-results.yml), the daily production pipeline, which is the only workflow that runs `dbt test` against real data.
 
 
 
@@ -466,8 +459,6 @@ dbt test    # validates real production data; needs a real ~/.dbt/profiles.yml
 - [x] Public results page
 - [x] Automated test suite (pytest, 100% coverage) + CI on every PR
 - [x] Skill-mention trends over time
-- [x] Local DuckDB demo — run and test the real dbt models without a Snowflake account
-- [x] Daily-ingest-volume anomaly test
 
 ## Potential Improvements
 - [ ] Larger keyword/location coverage
