@@ -502,10 +502,44 @@ dbt test    # validates real production data; needs a real ~/.dbt/profiles.yml
 - [x] Local DuckDB demo — run and test the real dbt models without a Snowflake account
 - [x] Daily-ingest-volume anomaly test
 
-## Potential Improvements
-- [ ] Larger keyword/location coverage
-- [ ] NLP-based skill extraction
-- [ ] Additional job sources (company ATS boards)
+## What's Next
+
+Grouped by what should happen first. Full detail lives on each linked issue.
+
+**Foundation / cleanup** — small effort, unblocks everything below
+- [ ] [#30](https://github.com/xjiang16/job-market-tracker/issues/30) Move pipeline scripts into their own folder
+- [ ] [#31](https://github.com/xjiang16/job-market-tracker/issues/31) Extract shared Snowflake connection helper
+- [ ] [#25](https://github.com/xjiang16/job-market-tracker/issues/25) Validator: sample real "none mentioned" descriptions
+- [ ] [#26](https://github.com/xjiang16/job-market-tracker/issues/26) Expand the tracked keyword list
+- [ ] [#38](https://github.com/xjiang16/job-market-tracker/issues/38) Spike: decide how to track point values on issues/PRs
+
+**Portfolio credibility** — cheap, backs up the "what I learned" story
+- [ ] [#8](https://github.com/xjiang16/job-market-tracker/issues/8) Test the results-page JS
+- [ ] [#11](https://github.com/xjiang16/job-market-tracker/issues/11) Publish dbt docs
+
+**Feature quick wins**
+- [ ] [#9](https://github.com/xjiang16/job-market-tracker/issues/9) Salary breakdown
+- [ ] [#27](https://github.com/xjiang16/job-market-tracker/issues/27) Pull more volume per search (pagination)
+- [ ] [#10](https://github.com/xjiang16/job-market-tracker/issues/10) Skill co-occurrence
+
+**Medium feature work**
+- [ ] [#12](https://github.com/xjiang16/job-market-tracker/issues/12) City-by-city selector on the results page
+- [ ] [#13](https://github.com/xjiang16/job-market-tracker/issues/13) Location comparison beyond Austin + Remote
+- [ ] [#16](https://github.com/xjiang16/job-market-tracker/issues/16) "Getting started" popovers per skill
+- [ ] [#17](https://github.com/xjiang16/job-market-tracker/issues/17) Seniority breakdown
+- [ ] [#29](https://github.com/xjiang16/job-market-tracker/issues/29) Company vs. market comparison
+
+**Bigger bets**
+- [ ] [#14](https://github.com/xjiang16/job-market-tracker/issues/14) Cross-profession comparison
+- [ ] [#18](https://github.com/xjiang16/job-market-tracker/issues/18) NLP-based skill extraction
+- [ ] [#19](https://github.com/xjiang16/job-market-tracker/issues/19) Pipeline observability
+- [ ] [#20](https://github.com/xjiang16/job-market-tracker/issues/20) Auto-generated weekly report
+- [ ] [#28](https://github.com/xjiang16/job-market-tracker/issues/28) Ingest company ATS board postings
+
+**Deferred (not sprint-ready)**
+- [ ] [#22](https://github.com/xjiang16/job-market-tracker/issues/22) Content/blog posts linking back to findings
+- [ ] [#23](https://github.com/xjiang16/job-market-tracker/issues/23) Affiliate links next to skill gaps
+- [ ] [#24](https://github.com/xjiang16/job-market-tracker/issues/24) A small paid historical API over skill_trends
 
 
 
