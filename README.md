@@ -392,7 +392,7 @@ Duplicate records are preserved in the raw table so transformations can be rerun
 - [x] Airflow orchestration
 - [x] Public results page
 
-## Potential Improvements
+## What's Next
 
 Grouped by what should happen first. Full detail lives on each linked issue.
 
