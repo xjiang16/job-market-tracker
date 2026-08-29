@@ -45,9 +45,31 @@ See [`demo/README.md`](demo/README.md) for what this does and doesn't prove.
 
 
 
+## Local frontend preview
+
+`docs/index.html` is a plain static file — no build step, no framework. Preview a
+visual change (a new chart, a layout tweak) locally instead of waiting on a GitHub
+Pages deploy:
+
+```bash
+cd docs
+python3 -m http.server 8000
+```
+
+Then open `http://localhost:8000`. Opening the file directly (double-click, or a
+`file://` URL) won't work — the page loads `data.json` and `data_history.json` via
+`fetch()`, which browsers block from a `file://` origin under CORS.
+
+To preview a specific change to the trends chart before real history has
+accumulated, temporarily drop a few sample rows into `docs/data_history.json`,
+refresh the browser tab, then revert the file before committing.
+
+
+
 ## Table of Contents
 
 - [Local demo (no Snowflake needed)](#local-demo-no-snowflake-needed)
+- [Local frontend preview](#local-frontend-preview)
 - [Architecture](#architecture)
 - [What the data shows](#what-the-data-shows)
 - [Tech stack](#tech-stack)
@@ -174,7 +196,12 @@ job-market-tracker/
 │   ├── test_ingest.py
 │   ├── test_export_results.py
 │   ├── test_load_to_snowflake.py
-│   └── test_update_readme.py
+│   ├── test_update_readme.py
+│   └── test_demo.py
+├── demo/
+│   ├── seed.py
+│   ├── profiles.yml
+│   └── README.md
 ├── data/
 │   └── raw/
 ├── job_market_tracker_dbt/
@@ -184,6 +211,8 @@ job-market-tracker/
 │   │   ├── stg_job_postings.sql
 │   │   ├── job_skills.sql
 │   │   └── skill_trends.sql
+│   └── tests/
+│       └── assert_daily_ingest_volume.sql
 ├── docs/
 │   ├── index.html
 │   ├── data.json
@@ -432,9 +461,11 @@ This project has three layers of testing, each covering something different:
 
 | Layer | What it checks | Runs where | Needs credentials |
 |---|---|---|---|
-| Unit tests (`pytest`) | Code logic — retry behavior, percentage math, row-building, templating | Every PR + locally | No |
-| `dbt parse` | The dbt project compiles (no syntax/ref errors) | Every PR + locally | No |
-| `dbt test` | Real transformed data — `not_null`, `unique` | Daily production run only | Yes |
+| Unit tests (`pytest`) | Python logic — retry behavior, percentage math, row-building, templating | Every PR + locally | No |
+| dbt integration test (`pytest` + DuckDB) | Real dbt execution — dedup, skill extraction, the `skill_trends` `UNPIVOT`, the daily-volume anomaly test — against fixture data | Every PR + locally | No |
+| `dbt test` (Snowflake) | Real production data | Daily production run only | Yes |
+
+The DuckDB integration test (`tests/test_demo.py`) is what replaced a plain `dbt parse` compile-check — it actually runs the models and asserts on the resulting values, which `dbt parse` never did. See [Local demo](#local-demo-no-snowflake-needed) for what it does and doesn't prove relative to real Snowflake.
 
 ### Running tests locally
 
@@ -443,18 +474,16 @@ pip install -r requirements-dev.txt
 pytest -v
 ```
 
-Coverage is enforced automatically — `pytest.ini` sets `--cov --cov-fail-under=100`, scoped via `.coveragerc` to `ingest.py`, `export_results.py`, `load_to_snowflake.py`, and `update_readme.py` — so the suite fails if new logic ships without a test.
+Coverage is enforced automatically — `pytest.ini` sets `--cov --cov-fail-under=100`, scoped via `.coveragerc` to `ingest.py`, `export_results.py`, `load_to_snowflake.py`, `update_readme.py`, and `demo/seed.py` — so the suite fails if new logic ships without a test.
 
 ```bash
 cd job_market_tracker_dbt
-
-dbt parse   # validates the project compiles; no warehouse connection needed
-dbt test    # validates real data; needs a real ~/.dbt/profiles.yml
+dbt test    # validates real production data; needs a real ~/.dbt/profiles.yml
 ```
 
 ### Continuous integration
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `pytest` and `dbt parse` on every pull request and on pushes to `main`. Neither step touches the real warehouse, so it runs without any secrets configured. This is separate from [`refresh-results.yml`](.github/workflows/refresh-results.yml), the daily production pipeline, which is the only workflow that runs `dbt test` against real data.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `pytest` on every pull request and on pushes to `main` — which now includes the DuckDB dbt integration test, so CI validates real dbt execution, not just that the project compiles. No secrets are needed for any of it. This is separate from [`refresh-results.yml`](.github/workflows/refresh-results.yml), the daily production pipeline, which is the only workflow that runs `dbt test` against real Snowflake data.
 
 
 
@@ -470,6 +499,8 @@ dbt test    # validates real data; needs a real ~/.dbt/profiles.yml
 - [x] Public results page
 - [x] Automated test suite (pytest, 100% coverage) + CI on every PR
 - [x] Skill-mention trends over time
+- [x] Local DuckDB demo — run and test the real dbt models without a Snowflake account
+- [x] Daily-ingest-volume anomaly test
 
 ## Potential Improvements
 - [ ] Larger keyword/location coverage
