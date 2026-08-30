@@ -132,20 +132,20 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated August 29, 2026): **252 postings** after deduplication.
+Current snapshot (updated August 30, 2026): **259 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
-| SQL | 36 postings | 14.3% |
-| Databricks | 15 postings | 6.0% |
-| Python | 14 postings | 5.6% |
-| Spark | 12 postings | 4.8% |
-| Snowflake | 11 postings | 4.4% |
-| AWS | 9 postings | 3.6% |
-| Kafka | 5 postings | 2.0% |
-| Scala | 5 postings | 2.0% |
-| Airflow | 4 postings | 1.6% |
-| dbt | 4 postings | 1.6% |
+| SQL | 36 postings | 13.9% |
+| Databricks | 15 postings | 5.8% |
+| Python | 14 postings | 5.4% |
+| Snowflake | 13 postings | 5.0% |
+| Spark | 12 postings | 4.6% |
+| AWS | 9 postings | 3.5% |
+| Kafka | 5 postings | 1.9% |
+| Scala | 5 postings | 1.9% |
+| Airflow | 4 postings | 1.5% |
+| dbt | 4 postings | 1.5% |
 | Redshift | 1 posting | 0.4% |
 | BigQuery | 1 posting | 0.4% |
 | GCP | 1 posting | 0.4% |
@@ -153,9 +153,9 @@ Current snapshot (updated August 29, 2026): **252 postings** after deduplication
 | Java | 1 posting | 0.4% |
 | Terraform | 0 postings | 0.0% |
 
-The most notable finding is that **74.2% of postings (187 out of 252) mention none of the 16 tracked tools explicitly**.
+The most notable finding is that **74.1% of postings (192 out of 259) mention none of the 16 tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (14.3%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (13.9%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->
