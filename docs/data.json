@@ -1,56 +1,56 @@
 {
-  "last_updated": "2026-08-29",
-  "total_postings": 252,
+  "last_updated": "2026-08-30",
+  "total_postings": 259,
   "skills": [
     {
       "label": "SQL",
       "count": 36,
-      "pct": 14.3
+      "pct": 13.9
     },
     {
       "label": "Databricks",
       "count": 15,
-      "pct": 6.0
+      "pct": 5.8
     },
     {
       "label": "Python",
       "count": 14,
-      "pct": 5.6
+      "pct": 5.4
+    },
+    {
+      "label": "Snowflake",
+      "count": 13,
+      "pct": 5.0
     },
     {
       "label": "Spark",
       "count": 12,
-      "pct": 4.8
-    },
-    {
-      "label": "Snowflake",
-      "count": 11,
-      "pct": 4.4
+      "pct": 4.6
     },
     {
       "label": "AWS",
       "count": 9,
-      "pct": 3.6
+      "pct": 3.5
     },
     {
       "label": "Kafka",
       "count": 5,
-      "pct": 2.0
+      "pct": 1.9
     },
     {
       "label": "Scala",
       "count": 5,
-      "pct": 2.0
+      "pct": 1.9
     },
     {
       "label": "Airflow",
       "count": 4,
-      "pct": 1.6
+      "pct": 1.5
     },
     {
       "label": "dbt",
       "count": 4,
-      "pct": 1.6
+      "pct": 1.5
     },
     {
       "label": "Redshift",
@@ -83,6 +83,6 @@
       "pct": 0.0
     }
   ],
-  "none_mentioned": 187,
-  "none_mentioned_pct": 74.2
+  "none_mentioned": 192,
+  "none_mentioned_pct": 74.1
 }
