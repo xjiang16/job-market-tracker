@@ -1,0 +1,4 @@
+# Auto-requests a reviewer on every PR when it's opened. This only requests
+# review — it does not block merging unless branch protection separately
+# requires code owner approval.
+* @wardm5
