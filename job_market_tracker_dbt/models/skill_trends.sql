@@ -4,6 +4,12 @@
 -- page show tool-mention rates trending over time instead of only "right now".
 -- unique_key upserts same-day reruns (e.g. workflow_dispatch) instead of duplicating.
 
+-- job_skills never drops a job_id once seen, so its full table is a lifetime-
+-- cumulative archive, not "the market right now". Left unfiltered, that archive
+-- only grows, so each day's handful of new postings become a shrinking share of
+-- the total and the % barely moves — the trend line flattens by construction,
+-- not because the market is actually static. Windowing to recently-posted jobs
+-- keeps this reading like a current snapshot instead of an all-time average.
 WITH base AS (
     SELECT
         mentions_python::int AS python,
@@ -12,6 +18,7 @@ WITH base AS (
         mentions_snowflake::int AS snowflake,
         mentions_dbt::int AS dbt
     FROM {{ ref('job_skills') }}
+    WHERE created_date >= CURRENT_DATE() - INTERVAL '30 days'
 ),
 
 unpivoted AS (

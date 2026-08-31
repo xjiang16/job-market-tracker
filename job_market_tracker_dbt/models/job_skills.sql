@@ -5,6 +5,7 @@ SELECT
     location,
     salary_min,
     salary_max,
+    created_date,
     search_keyword,
     search_location,
 
