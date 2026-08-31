@@ -534,7 +534,7 @@ Grouped by what should happen first. Full detail lives on each linked issue.
 - [ ] [#18](https://github.com/xjiang16/job-market-tracker/issues/18) NLP-based skill extraction
 - [ ] [#19](https://github.com/xjiang16/job-market-tracker/issues/19) Pipeline observability
 - [ ] [#20](https://github.com/xjiang16/job-market-tracker/issues/20) Auto-generated weekly report
-- [ ] [#28](https://github.com/xjiang16/job-market-tracker/issues/28) Ingest company ATS board postings
+- [ ] [#28](https://github.com/xjiang16/job-market-tracker/issues/28) Ingest company ATS board postings — spec/field-notes checklist: [#75](https://github.com/xjiang16/job-market-tracker/issues/75)
 
 **Deferred (not sprint-ready)**
 - [ ] [#22](https://github.com/xjiang16/job-market-tracker/issues/22) Content/blog posts linking back to findings
