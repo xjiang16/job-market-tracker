@@ -1,31 +1,31 @@
 {
-  "last_updated": "2026-09-01",
-  "total_postings": 261,
+  "last_updated": "2026-09-02",
+  "total_postings": 266,
   "skills": [
     {
       "label": "SQL",
       "count": 36,
-      "pct": 13.8
+      "pct": 13.5
     },
     {
       "label": "Databricks",
       "count": 15,
-      "pct": 5.7
+      "pct": 5.6
     },
     {
       "label": "Python",
       "count": 14,
-      "pct": 5.4
+      "pct": 5.3
     },
     {
       "label": "Snowflake",
       "count": 13,
-      "pct": 5.0
+      "pct": 4.9
     },
     {
       "label": "Spark",
       "count": 12,
-      "pct": 4.6
+      "pct": 4.5
     },
     {
       "label": "AWS",
@@ -83,6 +83,6 @@
       "pct": 0.0
     }
   ],
-  "none_mentioned": 194,
-  "none_mentioned_pct": 74.3
+  "none_mentioned": 199,
+  "none_mentioned_pct": 74.8
 }
