@@ -132,20 +132,20 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated September 03, 2026): **275 postings** after deduplication.
+Current snapshot (updated September 04, 2026): **281 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
-| SQL | 36 postings | 13.1% |
-| Python | 16 postings | 5.8% |
-| Databricks | 15 postings | 5.5% |
-| Snowflake | 13 postings | 4.7% |
-| Spark | 12 postings | 4.4% |
-| AWS | 9 postings | 3.3% |
+| SQL | 36 postings | 12.8% |
+| Python | 16 postings | 5.7% |
+| Databricks | 16 postings | 5.7% |
+| Snowflake | 13 postings | 4.6% |
+| Spark | 13 postings | 4.6% |
+| AWS | 9 postings | 3.2% |
 | Kafka | 5 postings | 1.8% |
 | Scala | 5 postings | 1.8% |
-| Airflow | 4 postings | 1.5% |
-| dbt | 4 postings | 1.5% |
+| Airflow | 4 postings | 1.4% |
+| dbt | 4 postings | 1.4% |
 | Redshift | 1 posting | 0.4% |
 | BigQuery | 1 posting | 0.4% |
 | GCP | 1 posting | 0.4% |
@@ -153,9 +153,9 @@ Current snapshot (updated September 03, 2026): **275 postings** after deduplicat
 | Java | 1 posting | 0.4% |
 | Terraform | 0 postings | 0.0% |
 
-The most notable finding is that **74.9% of postings (206 out of 275) mention none of the 16 tracked tools explicitly**.
+The most notable finding is that **74.7% of postings (210 out of 281) mention none of the 16 tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (13.1%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (12.8%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->
