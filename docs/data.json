@@ -1,11 +1,11 @@
 {
-  "last_updated": "2026-09-04",
-  "total_postings": 281,
+  "last_updated": "2026-09-05",
+  "total_postings": 283,
   "skills": [
     {
       "label": "SQL",
       "count": 36,
-      "pct": 12.8
+      "pct": 12.7
     },
     {
       "label": "Python",
@@ -33,6 +33,11 @@
       "pct": 3.2
     },
     {
+      "label": "dbt",
+      "count": 5,
+      "pct": 1.8
+    },
+    {
       "label": "Kafka",
       "count": 5,
       "pct": 1.8
@@ -44,11 +49,6 @@
     },
     {
       "label": "Airflow",
-      "count": 4,
-      "pct": 1.4
-    },
-    {
-      "label": "dbt",
       "count": 4,
       "pct": 1.4
     },
@@ -83,6 +83,6 @@
       "pct": 0.0
     }
   ],
-  "none_mentioned": 210,
-  "none_mentioned_pct": 74.7
+  "none_mentioned": 211,
+  "none_mentioned_pct": 74.6
 }
