@@ -672,13 +672,23 @@
       }
     }
 
-    function niceMax(rawMax) {
-      if (rawMax <= 0) return 10;
-      var steps = [5, 10, 20, 25, 50, 75, 100];
-      for (var i = 0; i < steps.length; i++) {
-        if (rawMax <= steps[i] * 0.85) return steps[i];
-      }
-      return Math.ceil((rawMax * 1.15) / 10) * 10;
+    // Fits the y-axis to the data's own spread instead of always anchoring at 0.
+    // These are single-digit-to-teens mention percentages, so a fixed 0-100 (or
+    // 0-to-next-multiple-of-10) scale squashes every series into a thin band at
+    // the bottom of the chart and makes real day-to-day movement unreadable.
+    function niceScale(dataMin, dataMax) {
+      var range = dataMax - dataMin;
+      if (range <= 0) range = Math.max(dataMax, 1);
+      var pad = range * 0.15;
+      var lo = Math.max(0, dataMin - pad);
+      var hi = dataMax + pad;
+
+      var step = Math.pow(10, Math.floor(Math.log10(hi - lo || 1)) - 1);
+      if (!step || step <= 0) step = 1;
+      lo = Math.floor(lo / step) * step;
+      hi = Math.ceil(hi / step) * step;
+      if (hi === lo) hi = lo + step;
+      return { min: lo, max: hi };
     }
 
     function pickTickIndexes(n) {
@@ -718,10 +728,17 @@
           if (typeof row[s] === 'number') allValues.push(row[s]);
         });
       });
-      var yMax = niceMax(Math.max.apply(null, allValues.concat([0])));
+      var yScale = niceScale(
+        Math.min.apply(null, allValues),
+        Math.max.apply(null, allValues)
+      );
+      var yMin = yScale.min, yMax = yScale.max;
+      // Sub-1 label precision so close-together ticks on a tight, zoomed-in
+      // range (e.g. 4%/5%/6%) don't round down to duplicate labels.
+      var labelDecimals = (yMax - yMin) < 5 ? 1 : 0;
 
       function xFor(i) { return MARGIN.left + (n === 1 ? 0 : (i / (n - 1)) * plotW); }
-      function yFor(v) { return MARGIN.top + plotH - (v / yMax) * plotH; }
+      function yFor(v) { return MARGIN.top + plotH - ((v - yMin) / (yMax - yMin)) * plotH; }
 
       var svg = svgEl('svg', {
         viewBox: '0 0 ' + W + ' ' + H,
@@ -730,7 +747,7 @@
         'aria-label': 'Skill mention percentage trend over time'
       });
 
-      [0, yMax / 2, yMax].forEach(function (v) {
+      [yMin, (yMin + yMax) / 2, yMax].forEach(function (v) {
         var y = yFor(v);
         svg.appendChild(svgEl('line', {
           x1: MARGIN.left, x2: W - MARGIN.right, y1: y, y2: y, class: 'trend-grid'
@@ -738,7 +755,7 @@
         var label = svgEl('text', {
           x: MARGIN.left - 8, y: y + 4, class: 'trend-axis-label', 'text-anchor': 'end'
         });
-        label.textContent = Math.round(v) + '%';
+        label.textContent = v.toFixed(labelDecimals) + '%';
         svg.appendChild(label);
       });
 
