@@ -66,6 +66,20 @@ all. Don't move it back to `:00`.
 Opening it directly (`file://`) silently breaks — CORS blocks `fetch()` from a
 `file://` origin. Serve it: `cd docs && python3 -m http.server 8000`.
 
+## PR description style
+
+Write PR descriptions as proper markdown, not a wall of prose:
+
+- A `## Summary` section with a few bullet points on what changed and why.
+- A `## Test plan` section listing how it was verified (commands run, tests added,
+  manual checks) — a checklist (`- [ ]` / `- [x]`) if there are multiple steps.
+- Reference issues/PRs with `#123` so GitHub auto-links them.
+- Backtick any file path, command, or identifier mentioned inline.
+
+This came out of review feedback on PR #86 (Misha: "add more info on how agents
+should style PRs with nice markdown"). Treat it as a starting point, not a fixed
+spec — if norms here shift, update this section rather than letting it go stale.
+
 ## Misc
 
 - `.DS_Store` is (unfortunately) tracked in this repo. It'll show as modified in
