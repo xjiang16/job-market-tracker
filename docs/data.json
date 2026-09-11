@@ -1,16 +1,16 @@
 {
-  "last_updated": "2026-09-10",
-  "total_postings": 301,
+  "last_updated": "2026-09-11",
+  "total_postings": 304,
   "skills": [
     {
       "label": "SQL",
       "count": 37,
-      "pct": 12.3
+      "pct": 12.2
     },
     {
       "label": "Python",
-      "count": 17,
-      "pct": 5.6
+      "count": 18,
+      "pct": 5.9
     },
     {
       "label": "Snowflake",
@@ -29,23 +29,23 @@
     },
     {
       "label": "AWS",
-      "count": 9,
-      "pct": 3.0
+      "count": 10,
+      "pct": 3.3
     },
     {
       "label": "dbt",
       "count": 5,
-      "pct": 1.7
+      "pct": 1.6
     },
     {
       "label": "Kafka",
       "count": 5,
-      "pct": 1.7
+      "pct": 1.6
     },
     {
       "label": "Scala",
       "count": 5,
-      "pct": 1.7
+      "pct": 1.6
     },
     {
       "label": "Airflow",
@@ -83,6 +83,6 @@
       "pct": 0.0
     }
   ],
-  "none_mentioned": 226,
-  "none_mentioned_pct": 75.1
+  "none_mentioned": 227,
+  "none_mentioned_pct": 74.7
 }
