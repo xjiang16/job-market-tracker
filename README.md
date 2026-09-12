@@ -132,16 +132,16 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated September 11, 2026): **304 postings** after deduplication.
+Current snapshot (updated September 12, 2026): **310 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
-| SQL | 37 postings | 12.2% |
-| Python | 18 postings | 5.9% |
-| Snowflake | 16 postings | 5.3% |
-| Databricks | 16 postings | 5.3% |
-| Spark | 13 postings | 4.3% |
-| AWS | 10 postings | 3.3% |
+| SQL | 38 postings | 12.3% |
+| Python | 18 postings | 5.8% |
+| Databricks | 17 postings | 5.5% |
+| Snowflake | 16 postings | 5.2% |
+| Spark | 14 postings | 4.5% |
+| AWS | 10 postings | 3.2% |
 | dbt | 5 postings | 1.6% |
 | Kafka | 5 postings | 1.6% |
 | Scala | 5 postings | 1.6% |
@@ -153,9 +153,9 @@ Current snapshot (updated September 11, 2026): **304 postings** after deduplicat
 | Java | 1 posting | 0.3% |
 | Terraform | 0 postings | 0.0% |
 
-The most notable finding is that **74.7% of postings (227 out of 304) mention none of the 16 tracked tools explicitly**.
+The most notable finding is that **74.8% of postings (232 out of 310) mention none of the 16 tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (12.2%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (12.3%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->
