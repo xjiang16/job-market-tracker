@@ -1,16 +1,16 @@
 {
-  "last_updated": "2026-09-13",
-  "total_postings": 312,
+  "last_updated": "2026-09-14",
+  "total_postings": 314,
   "skills": [
     {
       "label": "SQL",
       "count": 38,
-      "pct": 12.2
+      "pct": 12.1
     },
     {
       "label": "Python",
       "count": 18,
-      "pct": 5.8
+      "pct": 5.7
     },
     {
       "label": "Databricks",
@@ -83,6 +83,6 @@
       "pct": 0.0
     }
   ],
-  "none_mentioned": 234,
-  "none_mentioned_pct": 75.0
+  "none_mentioned": 236,
+  "none_mentioned_pct": 75.2
 }
