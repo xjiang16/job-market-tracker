@@ -132,16 +132,16 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated September 21, 2026): **337 postings** after deduplication.
+Current snapshot (updated September 22, 2026): **339 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
-| SQL | 40 postings | 11.9% |
+| SQL | 41 postings | 12.1% |
 | Snowflake | 20 postings | 5.9% |
 | Python | 19 postings | 5.6% |
 | Databricks | 18 postings | 5.3% |
-| Spark | 15 postings | 4.5% |
-| AWS | 10 postings | 3.0% |
+| Spark | 15 postings | 4.4% |
+| AWS | 10 postings | 2.9% |
 | dbt | 6 postings | 1.8% |
 | Kafka | 5 postings | 1.5% |
 | Scala | 5 postings | 1.5% |
@@ -153,9 +153,9 @@ Current snapshot (updated September 21, 2026): **337 postings** after deduplicat
 | Java | 1 posting | 0.3% |
 | Terraform | 0 postings | 0.0% |
 
-The most notable finding is that **75.4% of postings (254 out of 337) mention none of the 16 tracked tools explicitly**.
+The most notable finding is that **75.2% of postings (255 out of 339) mention none of the 16 tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (11.9%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (12.1%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->
