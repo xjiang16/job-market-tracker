@@ -132,16 +132,16 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated September 25, 2026): **359 postings** after deduplication.
+Current snapshot (updated September 26, 2026): **362 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
-| SQL | 41 postings | 11.4% |
+| SQL | 41 postings | 11.3% |
 | Snowflake | 22 postings | 6.1% |
-| Python | 19 postings | 5.3% |
-| Databricks | 18 postings | 5.0% |
-| Spark | 16 postings | 4.5% |
-| AWS | 11 postings | 3.1% |
+| Python | 19 postings | 5.2% |
+| Databricks | 19 postings | 5.2% |
+| Spark | 16 postings | 4.4% |
+| AWS | 11 postings | 3.0% |
 | dbt | 7 postings | 1.9% |
 | Airflow | 5 postings | 1.4% |
 | Kafka | 5 postings | 1.4% |
@@ -153,9 +153,9 @@ Current snapshot (updated September 25, 2026): **359 postings** after deduplicat
 | Java | 1 posting | 0.3% |
 | Terraform | 0 postings | 0.0% |
 
-The most notable finding is that **75.5% of postings (271 out of 359) mention none of the 16 tracked tools explicitly**.
+The most notable finding is that **75.4% of postings (273 out of 362) mention none of the 16 tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (11.4%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (11.3%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->
