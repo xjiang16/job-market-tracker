@@ -132,12 +132,12 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated September 26, 2026): **362 postings** after deduplication.
+Current snapshot (updated September 28, 2026): **364 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
 | SQL | 41 postings | 11.3% |
-| Snowflake | 22 postings | 6.1% |
+| Snowflake | 22 postings | 6.0% |
 | Python | 19 postings | 5.2% |
 | Databricks | 19 postings | 5.2% |
 | Spark | 16 postings | 4.4% |
@@ -153,7 +153,7 @@ Current snapshot (updated September 26, 2026): **362 postings** after deduplicat
 | Java | 1 posting | 0.3% |
 | Terraform | 0 postings | 0.0% |
 
-The most notable finding is that **75.4% of postings (273 out of 362) mention none of the 16 tracked tools explicitly**.
+The most notable finding is that **75.5% of postings (275 out of 364) mention none of the 16 tracked tools explicitly**.
 
 Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (11.3%).
 
