@@ -132,17 +132,17 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated October 01, 2026): **376 postings** after deduplication.
+Current snapshot (updated October 02, 2026): **381 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
-| SQL | 43 postings | 11.4% |
-| Snowflake | 22 postings | 5.9% |
-| Databricks | 20 postings | 5.3% |
-| Python | 19 postings | 5.1% |
+| SQL | 43 postings | 11.3% |
+| Snowflake | 22 postings | 5.8% |
+| Databricks | 20 postings | 5.2% |
+| Python | 19 postings | 5.0% |
 | Spark | 17 postings | 4.5% |
-| AWS | 12 postings | 3.2% |
-| dbt | 7 postings | 1.9% |
+| AWS | 12 postings | 3.1% |
+| dbt | 7 postings | 1.8% |
 | Airflow | 6 postings | 1.6% |
 | Kafka | 5 postings | 1.3% |
 | Scala | 5 postings | 1.3% |
@@ -153,9 +153,9 @@ Current snapshot (updated October 01, 2026): **376 postings** after deduplicatio
 | Java | 1 posting | 0.3% |
 | Terraform | 0 postings | 0.0% |
 
-The most notable finding is that **75.3% of postings (283 out of 376) mention none of the 16 tracked tools explicitly**.
+The most notable finding is that **75.6% of postings (288 out of 381) mention none of the 16 tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (11.4%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (11.3%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->
