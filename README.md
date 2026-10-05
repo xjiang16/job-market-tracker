@@ -132,13 +132,13 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated October 04, 2026): **396 postings** after deduplication.
+Current snapshot (updated October 05, 2026): **397 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
-| SQL | 43 postings | 10.9% |
-| Snowflake | 22 postings | 5.6% |
-| Databricks | 20 postings | 5.1% |
+| SQL | 43 postings | 10.8% |
+| Snowflake | 22 postings | 5.5% |
+| Databricks | 20 postings | 5.0% |
 | Python | 19 postings | 4.8% |
 | Spark | 17 postings | 4.3% |
 | AWS | 12 postings | 3.0% |
@@ -153,9 +153,9 @@ Current snapshot (updated October 04, 2026): **396 postings** after deduplicatio
 | Java | 1 posting | 0.3% |
 | Terraform | 0 postings | 0.0% |
 
-The most notable finding is that **75.5% of postings (299 out of 396) mention none of the 16 tracked tools explicitly**.
+The most notable finding is that **75.6% of postings (300 out of 397) mention none of the 16 tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (10.9%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (10.8%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->
