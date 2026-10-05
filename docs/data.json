@@ -1,21 +1,21 @@
 {
-  "last_updated": "2026-10-04",
-  "total_postings": 396,
+  "last_updated": "2026-10-05",
+  "total_postings": 397,
   "skills": [
     {
       "label": "SQL",
       "count": 43,
-      "pct": 10.9
+      "pct": 10.8
     },
     {
       "label": "Snowflake",
       "count": 22,
-      "pct": 5.6
+      "pct": 5.5
     },
     {
       "label": "Databricks",
       "count": 20,
-      "pct": 5.1
+      "pct": 5.0
     },
     {
       "label": "Python",
@@ -83,6 +83,6 @@
       "pct": 0.0
     }
   ],
-  "none_mentioned": 299,
-  "none_mentioned_pct": 75.5
+  "none_mentioned": 300,
+  "none_mentioned_pct": 75.6
 }
