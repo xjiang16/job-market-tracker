@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-10-05",
-  "total_postings": 397,
+  "last_updated": "2026-10-06",
+  "total_postings": 399,
   "skills": [
     {
       "label": "SQL",
@@ -83,6 +83,6 @@
       "pct": 0.0
     }
   ],
-  "none_mentioned": 300,
-  "none_mentioned_pct": 75.6
+  "none_mentioned": 302,
+  "none_mentioned_pct": 75.7
 }
