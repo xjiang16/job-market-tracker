@@ -132,17 +132,17 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated October 10, 2026): **428 postings** after deduplication.
+Current snapshot (updated October 11, 2026): **434 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
-| SQL | 44 postings | 10.3% |
-| Snowflake | 24 postings | 5.6% |
-| Databricks | 21 postings | 4.9% |
-| Python | 20 postings | 4.7% |
+| SQL | 44 postings | 10.1% |
+| Snowflake | 24 postings | 5.5% |
+| Databricks | 21 postings | 4.8% |
+| Python | 20 postings | 4.6% |
 | Spark | 19 postings | 4.4% |
 | AWS | 15 postings | 3.5% |
-| dbt | 10 postings | 2.3% |
+| dbt | 11 postings | 2.5% |
 | Airflow | 7 postings | 1.6% |
 | Kafka | 6 postings | 1.4% |
 | Scala | 6 postings | 1.4% |
@@ -153,9 +153,9 @@ Current snapshot (updated October 10, 2026): **428 postings** after deduplicatio
 | Java | 1 posting | 0.2% |
 | Terraform | 0 postings | 0.0% |
 
-The most notable finding is that **76.2% of postings (326 out of 428) mention none of the 16 tracked tools explicitly**.
+The most notable finding is that **76.3% of postings (331 out of 434) mention none of the 16 tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (10.3%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (10.1%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->
