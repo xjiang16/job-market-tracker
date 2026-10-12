@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-10-11",
-  "total_postings": 434,
+  "last_updated": "2026-10-12",
+  "total_postings": 435,
   "skills": [
     {
       "label": "SQL",
@@ -30,7 +30,7 @@
     {
       "label": "AWS",
       "count": 15,
-      "pct": 3.5
+      "pct": 3.4
     },
     {
       "label": "dbt",
@@ -83,6 +83,6 @@
       "pct": 0.0
     }
   ],
-  "none_mentioned": 331,
+  "none_mentioned": 332,
   "none_mentioned_pct": 76.3
 }
