@@ -1,11 +1,11 @@
 {
-  "last_updated": "2026-10-13",
-  "total_postings": 446,
+  "last_updated": "2026-10-14",
+  "total_postings": 449,
   "skills": [
     {
       "label": "SQL",
       "count": 46,
-      "pct": 10.3
+      "pct": 10.2
     },
     {
       "label": "Snowflake",
@@ -30,7 +30,7 @@
     {
       "label": "AWS",
       "count": 15,
-      "pct": 3.4
+      "pct": 3.3
     },
     {
       "label": "dbt",
@@ -83,6 +83,6 @@
       "pct": 0.0
     }
   ],
-  "none_mentioned": 339,
-  "none_mentioned_pct": 76.0
+  "none_mentioned": 342,
+  "none_mentioned_pct": 76.2
 }
