@@ -1,6 +1,6 @@
 {
-  "last_updated": "2026-10-25",
-  "total_postings": 475,
+  "last_updated": "2026-10-26",
+  "total_postings": 476,
   "skills": [
     {
       "label": "SQL",
@@ -39,8 +39,8 @@
     },
     {
       "label": "Airflow",
-      "count": 7,
-      "pct": 1.5
+      "count": 8,
+      "pct": 1.7
     },
     {
       "label": "Kafka",
@@ -84,5 +84,5 @@
     }
   ],
   "none_mentioned": 365,
-  "none_mentioned_pct": 76.8
+  "none_mentioned_pct": 76.7
 }
