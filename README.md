@@ -132,13 +132,13 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated October 31, 2026): **496 postings** after deduplication.
+Current snapshot (updated November 01, 2026): **499 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
-| SQL | 49 postings | 9.9% |
+| SQL | 50 postings | 10.0% |
 | Snowflake | 27 postings | 5.4% |
-| Python | 24 postings | 4.8% |
+| Python | 25 postings | 5.0% |
 | Databricks | 23 postings | 4.6% |
 | Spark | 20 postings | 4.0% |
 | AWS | 16 postings | 3.2% |
@@ -147,15 +147,15 @@ Current snapshot (updated October 31, 2026): **496 postings** after deduplicatio
 | Kafka | 7 postings | 1.4% |
 | Scala | 6 postings | 1.2% |
 | BigQuery | 3 postings | 0.6% |
+| Java | 3 postings | 0.6% |
 | Redshift | 2 postings | 0.4% |
 | GCP | 2 postings | 0.4% |
-| Java | 2 postings | 0.4% |
 | Docker | 1 posting | 0.2% |
 | Terraform | 0 postings | 0.0% |
 
-The most notable finding is that **76.4% of postings (379 out of 496) mention none of the 16 tracked tools explicitly**.
+The most notable finding is that **76.4% of postings (381 out of 499) mention none of the 16 tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (9.9%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (10.0%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->
