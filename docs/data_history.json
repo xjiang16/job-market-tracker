@@ -526,6 +526,14 @@
       "Python": 5.6,
       "Snowflake": 5.6,
       "SQL": 6.5
+    },
+    {
+      "date": "2026-11-03",
+      "Airflow": 1.0,
+      "dbt": 4.0,
+      "Python": 5.9,
+      "Snowflake": 5.9,
+      "SQL": 7.9
     }
   ]
 }
