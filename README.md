@@ -132,30 +132,30 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated November 09, 2026): **506 postings** after deduplication.
+Current snapshot (updated November 10, 2026): **507 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
-| SQL | 51 postings | 10.1% |
+| SQL | 52 postings | 10.3% |
 | Snowflake | 28 postings | 5.5% |
-| Python | 25 postings | 4.9% |
+| Python | 26 postings | 5.1% |
 | Databricks | 24 postings | 4.7% |
-| Spark | 20 postings | 4.0% |
+| Spark | 21 postings | 4.1% |
 | AWS | 16 postings | 3.2% |
 | dbt | 12 postings | 2.4% |
 | Airflow | 8 postings | 1.6% |
 | Kafka | 7 postings | 1.4% |
 | Scala | 6 postings | 1.2% |
+| Java | 4 postings | 0.8% |
 | BigQuery | 3 postings | 0.6% |
-| Java | 3 postings | 0.6% |
 | Redshift | 2 postings | 0.4% |
 | GCP | 2 postings | 0.4% |
 | Docker | 1 posting | 0.2% |
 | Terraform | 0 postings | 0.0% |
 
-The most notable finding is that **76.3% of postings (386 out of 506) mention none of the 16 tracked tools explicitly**.
+The most notable finding is that **76.1% of postings (386 out of 507) mention none of the 16 tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (10.1%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (10.3%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->
