@@ -132,7 +132,7 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated November 12, 2026): **511 postings** after deduplication.
+Current snapshot (updated November 13, 2026): **511 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
