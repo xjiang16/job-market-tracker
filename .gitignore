@@ -12,3 +12,7 @@ logs/
 
 demo/*.duckdb
 
+
+# Local DuckDB warehouse file — rebuilt every run from data/warehouse/*.csv
+/warehouse/
+*.duckdb.wal

@@ -1,7 +1,10 @@
 name: Refresh Job Market Tracker Data
 
 # Runs the full pipeline on GitHub's own servers, daily, for free (public repo).
-# No laptop, no manual steps. Triggers:
+# No laptop, no manual steps, no paid services: the warehouse is DuckDB, a local
+# database file rebuilt each run from the CSVs in data/warehouse/ and saved back
+# to them at the end (see warehouse.py). Those CSVs are committed in the daily
+# PR below, which is how data carries over from one run to the next. Triggers:
 #   - schedule: automatic, once a day
 #   - workflow_dispatch: lets you click "Run workflow" manually from the Actions tab
 #
@@ -39,7 +42,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install dbt-snowflake
+          pip install dbt-duckdb
 
       - name: Write dbt profiles.yml
         run: |
@@ -49,15 +52,10 @@ jobs:
             target: dev
             outputs:
               dev:
-                type: snowflake
-                account: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-                user: ${{ secrets.SNOWFLAKE_USER }}
-                password: ${{ secrets.SNOWFLAKE_PASSWORD }}
-                role: ACCOUNTADMIN
-                database: JOB_MARKET_TRACKER
-                warehouse: COMPUTE_WH
+                type: duckdb
+                path: ${{ github.workspace }}/warehouse/JOB_MARKET_TRACKER.duckdb
                 schema: ANALYTICS
-                threads: 4
+                threads: 1
           EOF
 
       - name: Run ingestion
@@ -66,15 +64,8 @@ jobs:
           ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
         run: python ingest.py
 
-      - name: Load raw postings into Snowflake
-        env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-          SNOWFLAKE_WAREHOUSE: COMPUTE_WH
-          SNOWFLAKE_DATABASE: JOB_MARKET_TRACKER
-          SNOWFLAKE_SCHEMA: RAW
-        run: python load_to_snowflake.py
+      - name: Load raw postings into DuckDB
+        run: python load_to_duckdb.py
 
       - name: Run dbt models and tests
         run: |
@@ -82,14 +73,7 @@ jobs:
           dbt run
           dbt test
 
-      - name: Export fresh results snapshot
-        env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-          SNOWFLAKE_WAREHOUSE: COMPUTE_WH
-          SNOWFLAKE_DATABASE: JOB_MARKET_TRACKER
-          SNOWFLAKE_SCHEMA: ANALYTICS
+      - name: Export fresh results snapshot and save warehouse tables
         run: python export_results.py
 
       - name: Update README statistics
@@ -116,7 +100,7 @@ jobs:
           git push origin "$BRANCH"
 
           gh pr create --title "Automated daily results refresh" \
-                       --body "Automated update of docs/data.json, docs/data_history.json, and README stats." \
+                       --body "Automated update of docs/data.json, docs/data_history.json, data/warehouse/, and README stats." \
                        --base main --head "$BRANCH"
 
           echo "has_changes=true" >> "$GITHUB_OUTPUT"

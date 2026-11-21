@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Job Market Tracker — What DE postings actually ask for</title>
-<meta name="description" content="A data pipeline that pulls live data engineering job postings from the Adzuna API, lands them in Snowflake, and mines them with dbt — orchestrated with Airflow and refreshed automatically every day." />
+<meta name="description" content="A data pipeline that pulls live data engineering job postings from the Adzuna API, lands them in DuckDB, and mines them with dbt — orchestrated with Airflow and refreshed automatically every day." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -370,7 +370,7 @@
     <div class="accent-rule"></div>
     <p class="lede">
       A pipeline that pulls live postings from the <code>Adzuna API</code>, lands them in
-      <code>Snowflake</code>, and mines them with <code>dbt</code> — orchestrated with
+      <code>DuckDB</code>, and mines them with <code>dbt</code> — orchestrated with
       <code>Airflow</code> and refreshed automatically every day via a scheduled GitHub Actions
       workflow. Below is a real query against the current dataset.
     </p>
@@ -495,7 +495,7 @@
         <span class="step-num">02</span>
         <div>
           <p class="step-title">LOAD</p>
-          <p class="step-desc">Raw postings land in Snowflake as an append-only log — nothing is cleaned or deduplicated yet.</p>
+          <p class="step-desc">Raw postings land in DuckDB as an append-only log — nothing is cleaned or deduplicated yet.</p>
         </div>
       </div>
       <div class="step">
@@ -515,7 +515,7 @@
     </div>
     <div class="stack-row">
       <span class="stack-pill">Python</span>
-      <span class="stack-pill">Snowflake</span>
+      <span class="stack-pill">DuckDB</span>
       <span class="stack-pill">dbt</span>
       <span class="stack-pill">Airflow</span>
       <span class="stack-pill">GitHub Actions</span>
