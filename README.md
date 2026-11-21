@@ -6,7 +6,7 @@
 
 [![Live Results](https://img.shields.io/badge/results-auto--updated_daily-5fd4c4?style=flat-square)](https://xjiang16.github.io/job-market-tracker/)
 ![Python](https://img.shields.io/badge/Python-3.10-3776AB?style=flat-square&logo=python&logoColor=white)
-![Snowflake](https://img.shields.io/badge/Snowflake-warehouse-29B5E8?style=flat-square&logo=snowflake&logoColor=white)
+![DuckDB](https://img.shields.io/badge/DuckDB-warehouse-FFF000?style=flat-square&logo=duckdb&logoColor=black)
 ![dbt](https://img.shields.io/badge/dbt-transform-FF694B?style=flat-square&logo=dbt&logoColor=white)
 ![Airflow](https://img.shields.io/badge/Airflow-orchestration-017CEE?style=flat-square&logo=apacheairflow&logoColor=white)
 
@@ -14,7 +14,7 @@
 
 ## What this is
 
-A data pipeline that pulls job postings from the **Adzuna API**, lands them in **Snowflake**, transforms and validates them with **dbt**, and automatically refreshes a public dashboard through **GitHub Actions**.
+A data pipeline that pulls job postings from the **Adzuna API**, lands them in **DuckDB**, transforms and validates them with **dbt**, and automatically refreshes a public dashboard through **GitHub Actions**.
 
 The pipeline is also orchestrated locally with **Apache Airflow** to demonstrate production-style workflow scheduling and dependency management.
 
@@ -26,12 +26,11 @@ Built to answer one question:
 
 
 
-## Local demo (no Snowflake needed)
+## Local demo (no API keys needed)
 
-The full pipeline needs a Snowflake account and Adzuna API keys — which meant nobody
-without those could ever run the dbt models or check that they actually work, not a
-reviewer, not a contributor, not even CI. `demo/` runs the real, unmodified dbt models
-against [DuckDB](https://duckdb.org/) and small fixture data instead:
+The full pipeline needs Adzuna API keys. `demo/` runs the real, unmodified dbt models
+against [DuckDB](https://duckdb.org/) and small fixture data instead, so anyone — a
+reviewer, a contributor, CI — can check that the models actually work:
 
 ```bash
 pip install -r requirements-dev.txt
@@ -68,7 +67,7 @@ refresh the browser tab, then revert the file before committing.
 
 ## Table of Contents
 
-- [Local demo (no Snowflake needed)](#local-demo-no-snowflake-needed)
+- [Local demo (no API keys needed)](#local-demo-no-api-keys-needed)
 - [Local frontend preview](#local-frontend-preview)
 - [Architecture](#architecture)
 - [What the data shows](#what-the-data-shows)
@@ -88,10 +87,10 @@ refresh the browser tab, then revert the file before committing.
 ```mermaid
 flowchart LR
     A["Adzuna API"] --> B["Python\nIngestion"]
-    B --> C[("Snowflake\nRAW.JOB_POSTINGS")]
+    B --> C[("DuckDB\nRAW.JOB_POSTINGS")]
     C --> D["dbt\nstg_job_postings\n(deduplication)"]
     D --> E["dbt\njob_skills\n(skill extraction)"]
-    E --> F[("Snowflake\nANALYTICS")]
+    E --> F[("DuckDB\nANALYTICS")]
     F --> G["export_results.py"]
     G --> H["docs/data.json"]
     H --> I["GitHub Pages\nDashboard"]
@@ -109,7 +108,8 @@ flowchart LR
 **Jump to source:**
 
 [`ingest.py`](ingest.py) ·
-[`load_to_snowflake.py`](load_to_snowflake.py) ·
+[`load_to_duckdb.py`](load_to_duckdb.py) ·
+[`warehouse.py`](warehouse.py) ·
 [`stg_job_postings.sql`](job_market_tracker_dbt/models/stg_job_postings.sql) ·
 [`job_skills.sql`](job_market_tracker_dbt/models/job_skills.sql) ·
 [`export_results.py`](export_results.py)
@@ -117,14 +117,17 @@ flowchart LR
 Every automated refresh:
 
 - Fetches current job postings from the Adzuna API
-- Loads raw records into Snowflake (append-only)
+- Rebuilds a local DuckDB warehouse from the CSVs saved in `data/warehouse/`
+- Loads today's raw records into it (append-only)
 - Transforms and deduplicates data with dbt
 - Runs dbt data-quality tests
-- Exports aggregated analytics to `docs/data.json`
+- Exports aggregated analytics to `docs/data.json`, and saves the warehouse tables back to `data/warehouse/`
 - Regenerates the README statistics section
 - Publishes the updated dashboard through GitHub Pages
 
 GitHub Actions runs the production pipeline automatically every day, keeping both the dashboard and README synchronized with the latest data.
+
+**Why DuckDB plus CSVs in git?** The warehouse used to be Snowflake, until the free trial ended in November 2026 and the daily runs started failing. DuckDB is a free embedded database — just a local file, no account. GitHub Actions starts every run on a fresh machine, though, so the tables that can't be rebuilt (raw postings, and the daily `skill_trends` snapshots) are saved as sorted CSVs in `data/warehouse/` and committed by the daily PR. See [`warehouse.py`](warehouse.py).
 
 Apache Airflow is included as a local orchestration implementation demonstrating the same end-to-end workflow using an industry-standard scheduler.
 
@@ -168,7 +171,7 @@ This is a growing sample, refreshed automatically once a day via [GitHub Actions
 |-------|------|-----|
 | Source | Adzuna API | Free API aggregating postings from thousands of employers |
 | Ingestion | Python (`requests`) | Lightweight and easy to test |
-| Warehouse | Snowflake | Modern cloud data warehouse with independent compute/storage |
+| Warehouse | DuckDB | Free embedded analytical database — no server or account (moved from Snowflake when its trial ended) |
 | Transformation | dbt | Version-controlled SQL models with dependency management and testing |
 | Orchestration | Apache Airflow | Industry-standard workflow scheduler |
 | Secrets | `python-dotenv` | Keeps credentials out of source control |
@@ -180,7 +183,8 @@ This is a growing sample, refreshed automatically once a day via [GitHub Actions
 ```text
 job-market-tracker/
 ├── ingest.py
-├── load_to_snowflake.py
+├── load_to_duckdb.py
+├── warehouse.py
 ├── export_results.py
 ├── update_readme.py
 ├── requirements.txt
@@ -195,7 +199,8 @@ job-market-tracker/
 ├── tests/
 │   ├── test_ingest.py
 │   ├── test_export_results.py
-│   ├── test_load_to_snowflake.py
+│   ├── test_load_to_duckdb.py
+│   ├── test_warehouse.py
 │   ├── test_update_readme.py
 │   └── test_demo.py
 ├── demo/
@@ -203,7 +208,8 @@ job-market-tracker/
 │   ├── profiles.yml
 │   └── README.md
 ├── data/
-│   └── raw/
+│   ├── raw/            # today's API responses (not committed)
+│   └── warehouse/      # persisted tables as CSV (committed daily)
 ├── job_market_tracker_dbt/
 │   ├── models/
 │   │   ├── sources.yml
@@ -236,73 +242,40 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 pip install -r requirements.txt
-pip install dbt-snowflake
+pip install dbt-duckdb
 ```
 
 
 
 ### 2. Configure credentials
 
-Copy:
+Copy `.env.example` to `.env` and fill in your Adzuna API credentials. That's the
+only credential the pipeline needs — the warehouse is a local DuckDB file.
 
-```text
-.env.example
+
+
+### 3. Configure dbt
+
+Create `~/.dbt/profiles.yml` pointing dbt at the local DuckDB file (use the absolute
+path to your clone):
+
+```yaml
+job_market_tracker_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: /absolute/path/to/job-market-tracker/warehouse/JOB_MARKET_TRACKER.duckdb
+      schema: ANALYTICS
+      threads: 1
 ```
 
-to:
-
-```text
-.env
-```
-
-Fill in:
-
-- Adzuna API credentials
-- Snowflake account
-- User
-- Password
-- Warehouse
-- Database
-- Schema
+No tables need to be created by hand: `load_to_duckdb.py` creates them on each run
+from the CSVs in `data/warehouse/`.
 
 
 
-### 3. Create Snowflake objects
-
-```sql
-CREATE DATABASE JOB_MARKET_TRACKER;
-CREATE SCHEMA JOB_MARKET_TRACKER.RAW;
-
-CREATE TABLE JOB_MARKET_TRACKER.RAW.JOB_POSTINGS (
-    job_id STRING,
-    title STRING,
-    company STRING,
-    location STRING,
-    salary_min FLOAT,
-    salary_max FLOAT,
-    created_date TIMESTAMP,
-    description STRING,
-    search_keyword STRING,
-    search_location STRING,
-    loaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP()
-);
-```
-
-
-
-### 4. Configure dbt
-
-Initialize dbt:
-
-```bash
-dbt init
-```
-
-Configure `~/.dbt/profiles.yml` to point to your Snowflake account using the `ANALYTICS` schema.
-
-
-
-### 5. Configure Airflow *(optional)*
+### 4. Configure Airflow *(optional)*
 
 Airflow should be installed in its own virtual environment.
 
@@ -315,23 +288,24 @@ Place the DAG file in:
 The DAG references this project's virtual environment directly to execute:
 
 - `ingest.py`
-- `load_to_snowflake.py`
+- `load_to_duckdb.py`
 - `dbt run`
+- `export_results.py`
 - `dbt test`
 
 Airflow provides a production-style orchestration workflow with task dependencies, scheduling, and monitoring.
 
-### 6. Configure GitHub Actions *(automated refresh)*
+### 5. Configure GitHub Actions *(automated refresh)*
 
 This repository includes a GitHub Actions workflow that automatically refreshes the public results dashboard daily without requiring a local machine.
 
 The workflow:
 
 1. Runs the Python ingestion script
-2. Loads new job postings into Snowflake
+2. Rebuilds the DuckDB warehouse from `data/warehouse/` and loads new job postings
 3. Executes dbt transformations and data quality tests
-4. Exports analytics results into `docs/data.json`
-5. Updates the GitHub Pages dashboard
+4. Exports analytics results into `docs/data.json` and saves the warehouse back to `data/warehouse/`
+5. Opens, approves, and merges a PR with the refreshed files, which updates the GitHub Pages dashboard
 
 Required credentials are securely stored using GitHub Actions Secrets.
 
@@ -354,9 +328,7 @@ Required secrets:
 ```text
 ADZUNA_APP_ID
 ADZUNA_APP_KEY
-SNOWFLAKE_ACCOUNT
-SNOWFLAKE_USER
-SNOWFLAKE_PASSWORD
+APPROVER_TOKEN    # a second identity's PAT, to approve the daily PR
 ```
 
 2. Enable workflow permissions:
@@ -386,14 +358,19 @@ Run each step locally:
 ```bash
 python ingest.py
 
-python load_to_snowflake.py
+python load_to_duckdb.py
 
 cd job_market_tracker_dbt
-
 dbt run
-
 dbt test
+cd ..
+
+python export_results.py
 ```
+
+Note: `load_to_duckdb.py` loads every file in `data/raw/`, so clear out old local
+files first if you don't want them added again (duplicates are removed by
+`stg_job_postings`, but they'd still be saved in `data/warehouse/`).
 
 
 
@@ -406,13 +383,13 @@ GitHub Actions
       ↓
 Python ingestion
       ↓
-Snowflake raw layer
+DuckDB raw layer (restored from data/warehouse/)
       ↓
 dbt transformations
       ↓
 dbt data quality tests
       ↓
-Export analytics results
+Export analytics results + save data/warehouse/
       ↓
 GitHub Pages dashboard
 ```
@@ -463,9 +440,9 @@ This project has three layers of testing, each covering something different:
 |---|---|---|---|
 | Unit tests (`pytest`) | Python logic — retry behavior, percentage math, row-building, templating | Every PR + locally | No |
 | dbt integration test (`pytest` + DuckDB) | Real dbt execution — dedup, skill extraction, the `skill_trends` `UNPIVOT`, the daily-volume anomaly test — against fixture data | Every PR + locally | No |
-| `dbt test` (Snowflake) | Real production data | Daily production run only | Yes |
+| `dbt test` (production) | Real production data | Daily production run only | Adzuna keys only |
 
-The DuckDB integration test (`tests/test_demo.py`) is what replaced a plain `dbt parse` compile-check — it actually runs the models and asserts on the resulting values, which `dbt parse` never did. See [Local demo](#local-demo-no-snowflake-needed) for what it does and doesn't prove relative to real Snowflake.
+The DuckDB integration test (`tests/test_demo.py`) is what replaced a plain `dbt parse` compile-check — it actually runs the models and asserts on the resulting values, which `dbt parse` never did. See [Local demo](#local-demo-no-api-keys-needed) for more.
 
 ### Running tests locally
 
@@ -474,7 +451,7 @@ pip install -r requirements-dev.txt
 pytest -v
 ```
 
-Coverage is enforced automatically — `pytest.ini` sets `--cov --cov-fail-under=100`, scoped via `.coveragerc` to `ingest.py`, `export_results.py`, `load_to_snowflake.py`, `update_readme.py`, and `demo/seed.py` — so the suite fails if new logic ships without a test.
+Coverage is enforced automatically — `pytest.ini` sets `--cov --cov-fail-under=100`, scoped via `.coveragerc` to `ingest.py`, `export_results.py`, `load_to_duckdb.py`, `warehouse.py`, `update_readme.py`, and `demo/seed.py` — so the suite fails if new logic ships without a test.
 
 ```bash
 cd job_market_tracker_dbt
@@ -483,7 +460,7 @@ dbt test    # validates real production data; needs a real ~/.dbt/profiles.yml
 
 ### Continuous integration
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `pytest` on every pull request and on pushes to `main` — which now includes the DuckDB dbt integration test, so CI validates real dbt execution, not just that the project compiles. No secrets are needed for any of it. This is separate from [`refresh-results.yml`](.github/workflows/refresh-results.yml), the daily production pipeline, which is the only workflow that runs `dbt test` against real Snowflake data.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs `pytest` on every pull request and on pushes to `main` — which now includes the DuckDB dbt integration test, so CI validates real dbt execution, not just that the project compiles. No secrets are needed for any of it. This is separate from [`refresh-results.yml`](.github/workflows/refresh-results.yml), the daily production pipeline, which is the only workflow that runs `dbt test` against real production data.
 
 
 
@@ -501,6 +478,7 @@ dbt test    # validates real production data; needs a real ~/.dbt/profiles.yml
 - [x] Skill-mention trends over time
 - [x] Local DuckDB demo — run and test the real dbt models without a Snowflake account
 - [x] Daily-ingest-volume anomaly test
+- [x] Moved the warehouse from Snowflake to free DuckDB (trial ended Nov 2026)
 
 ## What's Next
 
