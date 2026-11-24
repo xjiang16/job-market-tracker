@@ -486,7 +486,6 @@ Grouped by what should happen first. Full detail lives on each linked issue.
 
 **Foundation / cleanup** — small effort, unblocks everything below
 - [ ] [#30](https://github.com/xjiang16/job-market-tracker/issues/30) Move pipeline scripts into their own folder
-- [ ] [#31](https://github.com/xjiang16/job-market-tracker/issues/31) Extract shared Snowflake connection helper
 - [ ] [#25](https://github.com/xjiang16/job-market-tracker/issues/25) Validator: sample real "none mentioned" descriptions
 - [ ] [#26](https://github.com/xjiang16/job-market-tracker/issues/26) Expand the tracked keyword list
 - [ ] [#38](https://github.com/xjiang16/job-market-tracker/issues/38) Spike: decide how to track point values on issues/PRs
