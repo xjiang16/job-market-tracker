@@ -384,3 +384,8 @@ snapshot_date,skill,total_postings,mention_count,pct
 2026-11-15,python,,,11.8
 2026-11-15,snowflake,,,3.9
 2026-11-15,sql,,,13.7
+2026-11-24,airflow,17,1,5.9
+2026-11-24,dbt,17,0,0.0
+2026-11-24,python,17,3,17.6
+2026-11-24,snowflake,17,2,11.8
+2026-11-24,sql,17,4,23.5

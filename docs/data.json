@@ -1,81 +1,81 @@
 {
-  "last_updated": "2026-11-15",
-  "total_postings": 518,
+  "last_updated": "2026-11-24",
+  "total_postings": 130,
   "skills": [
     {
       "label": "SQL",
-      "count": 53,
-      "pct": 10.2
-    },
-    {
-      "label": "Snowflake",
-      "count": 29,
-      "pct": 5.6
+      "count": 17,
+      "pct": 13.1
     },
     {
       "label": "Python",
-      "count": 26,
-      "pct": 5.0
-    },
-    {
-      "label": "Databricks",
-      "count": 24,
-      "pct": 4.6
-    },
-    {
-      "label": "Spark",
-      "count": 21,
-      "pct": 4.1
+      "count": 10,
+      "pct": 7.7
     },
     {
       "label": "AWS",
-      "count": 16,
+      "count": 9,
+      "pct": 6.9
+    },
+    {
+      "label": "Snowflake",
+      "count": 5,
+      "pct": 3.8
+    },
+    {
+      "label": "Databricks",
+      "count": 5,
+      "pct": 3.8
+    },
+    {
+      "label": "Spark",
+      "count": 4,
       "pct": 3.1
     },
     {
-      "label": "dbt",
-      "count": 12,
-      "pct": 2.3
+      "label": "Kafka",
+      "count": 4,
+      "pct": 3.1
     },
     {
       "label": "Airflow",
-      "count": 8,
-      "pct": 1.5
-    },
-    {
-      "label": "Kafka",
-      "count": 7,
-      "pct": 1.4
-    },
-    {
-      "label": "Scala",
-      "count": 6,
-      "pct": 1.2
-    },
-    {
-      "label": "Java",
-      "count": 4,
-      "pct": 0.8
+      "count": 3,
+      "pct": 2.3
     },
     {
       "label": "BigQuery",
-      "count": 3,
-      "pct": 0.6
-    },
-    {
-      "label": "Redshift",
       "count": 2,
-      "pct": 0.4
+      "pct": 1.5
     },
     {
       "label": "GCP",
       "count": 2,
-      "pct": 0.4
+      "pct": 1.5
+    },
+    {
+      "label": "dbt",
+      "count": 1,
+      "pct": 0.8
+    },
+    {
+      "label": "Redshift",
+      "count": 1,
+      "pct": 0.8
+    },
+    {
+      "label": "Java",
+      "count": 1,
+      "pct": 0.8
+    },
+    {
+      "label": "Scala",
+      "count": 1,
+      "pct": 0.8
     },
     {
       "label": "Docker",
-      "count": 1,
-      "pct": 0.2
+      "count": 0,
+      "pct": 0.0
     },
     {
       "label": "Terraform",
@@ -83,6 +83,6 @@
       "pct": 0.0
     }
   ],
-  "none_mentioned": 396,
-  "none_mentioned_pct": 76.4
+  "none_mentioned": 100,
+  "none_mentioned_pct": 76.9
 }
