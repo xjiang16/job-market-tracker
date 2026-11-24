@@ -3,7 +3,7 @@ name: CI
 # Runs on every PR (and pushes to main) so bugs are caught before merge instead
 # of by the next daily refresh run. Uses no real credentials: pytest mocks all
 # external calls, and the dbt integration test (tests/test_demo.py) runs the
-# real models against local DuckDB fixture data instead of Snowflake.
+# real models against local DuckDB fixture data instead of live Adzuna data.
 
 on:
   pull_request:

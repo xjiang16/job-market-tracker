@@ -1,6 +1,6 @@
 """
 Seeds a local DuckDB file with fixture data shaped like RAW.JOB_POSTINGS,
-so the dbt models can be run and tested without a Snowflake account.
+so the dbt models can be run and tested without API keys or real data.
 
 The file is named JOB_MARKET_TRACKER.duckdb on purpose: dbt-duckdb names its
 catalog after the database file's basename, so this matches the `database:`

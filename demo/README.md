@@ -1,13 +1,13 @@
-# Local demo (no Snowflake account needed)
+# Local demo (no API keys needed)
 
 Runs the real dbt models — `stg_job_postings`, `job_skills`, `skill_trends` — against
-[DuckDB](https://duckdb.org/) instead of Snowflake, using small fixture data instead of
-live Adzuna postings. Nothing in `job_market_tracker_dbt/models/` is modified or
-duplicated for this: the same SQL files that run in production run here.
+[DuckDB](https://duckdb.org/) using small fixture data instead of live Adzuna postings.
+Nothing in `job_market_tracker_dbt/models/` is modified or duplicated for this: the same
+SQL files that run in production run here.
 
-This exists because the real pipeline needs a Snowflake account + `ADZUNA_APP_ID`/`ADZUNA_APP_KEY`
-to run at all, which meant nobody without one of those could ever verify the dbt models actually
-work — not a reviewer, not a contributor, not even in CI. This gives all three a way to.
+Production also runs on DuckDB now (it moved off Snowflake when the trial ended — see
+`warehouse.py`), but it needs `ADZUNA_APP_ID`/`ADZUNA_APP_KEY` and real data. This gives
+reviewers, contributors, and CI a way to verify the models without either.
 
 ## Run it
 
@@ -42,10 +42,7 @@ Confirms the actual model logic is correct — deduplication, `ILIKE` skill matc
 the `skill_trends` `UNPIVOT`/incremental-upsert behavior all run against real (if small)
 data and produce hand-checkable output. `tests/test_demo.py` asserts on the exact values.
 
-It does **not** prove the models work on Snowflake specifically. DuckDB and Snowflake
-share most SQL, including the less common features these models lean on (`QUALIFY`,
-`UNPIVOT`), but they aren't identical dialects — something that passes here could still
-fail against real Snowflake, and vice versa. This replaced the CI's old `dbt parse`
-check, which only validated Jinja/YAML compiled — never real execution, on any warehouse.
-Real execution against DuckDB is a strictly stronger check than that, just not a
-substitute for occasionally running the actual production workflow.
+It runs on the same database engine as production, so dialect differences are no longer a
+concern. What it doesn't cover is real data — Adzuna's actual descriptions and volumes —
+which only the daily production workflow exercises. This replaced the CI's old `dbt parse`
+check, which only validated Jinja/YAML compiled — never real execution.

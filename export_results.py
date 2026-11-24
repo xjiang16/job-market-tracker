@@ -1,17 +1,22 @@
 """
-Queries the current skills breakdown from Snowflake and writes it to
-docs/data.json, so the public results page can display real, current
-numbers without needing a live database connection of its own.
+Queries the current skills breakdown from the local DuckDB warehouse and writes
+it to docs/data.json (plus the trend history to docs/data_history.json), so the
+public results page can display real, current numbers without needing a live
+database connection of its own.
 
-Run this any time after `dbt run` to refresh the public page's data.
+Then saves the persisted tables back to data/warehouse/ (see warehouse.py), so
+the next run picks up where this one left off.
+
+Run this after `dbt run` to refresh the public page's data.
 """
 
 import json
 import os
 from datetime import date
 
-import snowflake.connector
-from dotenv import load_dotenv
+import duckdb
+
+import warehouse
 
 SKILL_COLUMNS = [
     ("python", "Python"),
@@ -47,19 +52,20 @@ QUERY = f"""
         SELECT
             {_mentions_cols},
             COUNT(*) AS how_many
-        FROM job_skills
+        FROM ANALYTICS.job_skills
         GROUP BY {", ".join(str(i) for i in range(1, len(SKILL_COLUMNS) + 1))}
     )
 """
 
 HISTORY_QUERY = """
     SELECT snapshot_date, skill, pct
-    FROM skill_trends
+    FROM ANALYTICS.skill_trends
     ORDER BY snapshot_date, skill
 """
 
-# skill_trends.skill comes from an UNPIVOT over unquoted column names, which
-# Snowflake normalizes to uppercase — map defensively rather than assume case.
+# skill_trends.skill comes from an UNPIVOT over unquoted column names. DuckDB
+# keeps them lowercase; Snowflake (which this pipeline used to run on) uppercased
+# them — map defensively rather than assume case.
 SKILL_LABELS = {
     "PYTHON": "Python",
     "SQL": "SQL",
@@ -105,33 +111,23 @@ def build_history(rows):
         if label is None:
             continue
         date_key = snapshot_date.isoformat() if hasattr(snapshot_date, "isoformat") else str(snapshot_date)
-        # Snowflake returns NUMBER(x,1) columns (like pct) as decimal.Decimal, which
-        # json.dump() can't serialize — convert to float here, at the point it enters
-        # the dict that becomes JSON.
+        # Database drivers can return numeric columns like pct as decimal.Decimal
+        # (Snowflake did), which json.dump() can't serialize — convert to float
+        # here, at the point it enters the dict that becomes JSON.
         by_date.setdefault(date_key, {"date": date_key})[label] = float(pct_value)
 
     history = [by_date[d] for d in sorted(by_date)]
     return {"series": SERIES_ORDER, "history": history}
 
 
-def run():
-    conn = snowflake.connector.connect(
-        account=os.environ["SNOWFLAKE_ACCOUNT"],
-        user=os.environ["SNOWFLAKE_USER"],
-        password=os.environ["SNOWFLAKE_PASSWORD"],
-        warehouse=os.environ["SNOWFLAKE_WAREHOUSE"],
-        database=os.environ["SNOWFLAKE_DATABASE"],
-        schema=os.environ["SNOWFLAKE_SCHEMA"],
-    )
-    cursor = conn.cursor()
+def run(db_path=warehouse.DB_PATH, store_dir=warehouse.STORE_DIR):
+    con = duckdb.connect(db_path)
 
     try:
-        cursor.execute(QUERY)
-        row = cursor.fetchone()
+        row = con.execute(QUERY).fetchone()
         data = compute_data(row, date.today().isoformat())
 
-        cursor.execute(HISTORY_QUERY)
-        history = build_history(cursor.fetchall())
+        history = build_history(con.execute(HISTORY_QUERY).fetchall())
 
         os.makedirs("docs", exist_ok=True)
         with open("docs/data.json", "w") as f:
@@ -141,11 +137,12 @@ def run():
 
         print(f"Wrote docs/data.json — {data['total_postings']} postings, last_updated={data['last_updated']}")
         print(f"Wrote docs/data_history.json — {len(history['history'])} day(s) of history")
+
+        warehouse.save(con, store_dir)
+        print(f"Saved warehouse tables to {store_dir}/")
     finally:
-        cursor.close()
-        conn.close()
+        con.close()
 
 
 if __name__ == "__main__":  # pragma: no cover
-    load_dotenv()
     run()

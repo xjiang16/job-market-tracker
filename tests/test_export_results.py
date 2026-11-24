@@ -1,9 +1,11 @@
 import json
 from datetime import date
 from decimal import Decimal
-from unittest.mock import MagicMock, patch
+
+import duckdb
 
 import export_results
+import warehouse
 
 
 def _row(**counts):
@@ -83,8 +85,8 @@ def test_build_history_empty_input():
     }
 
 
-def test_build_history_output_is_json_serializable_with_real_snowflake_types():
-    # Snowflake returns NUMBER(x,1) columns (like skill_trends.pct) as
+def test_build_history_output_is_json_serializable_with_decimal_pct():
+    # Snowflake returned NUMBER(x,1) columns (like skill_trends.pct) as
     # decimal.Decimal, not float — using a real Decimal here, instead of a
     # plain float literal, is what catches json.dump() blowing up on it.
     rows = [(date(2026, 8, 1), "SQL", Decimal("14.9"))]
@@ -95,27 +97,30 @@ def test_build_history_output_is_json_serializable_with_real_snowflake_types():
     json.dumps(result)  # should not raise TypeError: Object of type Decimal is not JSON serializable
 
 
-@patch("export_results.snowflake.connector.connect")
-def test_run_writes_docs_data_json_and_history(mock_connect, tmp_path, monkeypatch):
+def test_run_writes_docs_json_and_saves_warehouse(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    for var in ["SNOWFLAKE_ACCOUNT", "SNOWFLAKE_USER", "SNOWFLAKE_PASSWORD",
-                "SNOWFLAKE_WAREHOUSE", "SNOWFLAKE_DATABASE", "SNOWFLAKE_SCHEMA"]:
-        monkeypatch.setenv(var, "test")
+    db_path = str(tmp_path / "JOB_MARKET_TRACKER.duckdb")
+    store_dir = tmp_path / "store"
 
-    mock_cursor = MagicMock()
-    mock_cursor.fetchone.return_value = _row(python=2, sql=6, snowflake=1, dbt=1, total=10, none_mentioned=0)
-    mock_cursor.fetchall.return_value = [(date(2026, 8, 1), "SQL", 60.0)]
-    mock_conn = MagicMock()
-    mock_conn.cursor.return_value = mock_cursor
-    mock_connect.return_value = mock_conn
+    # The shape dbt leaves behind: job_skills + skill_trends in ANALYTICS.
+    con = duckdb.connect(db_path)
+    warehouse.restore(con, str(store_dir))
+    mention_cols = ", ".join(f"FALSE AS mentions_{key}" for key, _ in export_results.SKILL_COLUMNS)
+    con.execute(f"CREATE TABLE ANALYTICS.job_skills AS SELECT {mention_cols} FROM range(4)")
+    con.execute("UPDATE ANALYTICS.job_skills SET mentions_sql = TRUE WHERE rowid < 3")
+    con.execute(warehouse.TRENDS_DDL)
+    con.execute("INSERT INTO ANALYTICS.skill_trends VALUES ('2026-08-01', 'sql', 4, 3, 75.0)")
+    con.close()
 
-    export_results.run()
+    export_results.run(db_path, str(store_dir))
 
     written = json.loads((tmp_path / "docs" / "data.json").read_text())
-    assert written["total_postings"] == 10
+    assert written["total_postings"] == 4
+    assert written["skills"][0] == {"label": "SQL", "count": 3, "pct": 75.0}
+    assert written["none_mentioned"] == 1
 
     history = json.loads((tmp_path / "docs" / "data_history.json").read_text())
-    assert history["history"] == [{"date": "2026-08-01", "SQL": 60.0}]
+    assert history["history"] == [{"date": "2026-08-01", "SQL": 75.0}]
 
-    mock_cursor.close.assert_called_once()
-    mock_conn.close.assert_called_once()
+    assert (store_dir / warehouse.TRENDS_FILE).exists()
+    assert (store_dir / warehouse.RAW_FILE).exists()
