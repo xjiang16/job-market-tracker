@@ -135,30 +135,30 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated November 15, 2026): **518 postings** after deduplication.
+Current snapshot (updated November 24, 2026): **130 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
-| SQL | 53 postings | 10.2% |
-| Snowflake | 29 postings | 5.6% |
-| Python | 26 postings | 5.0% |
-| Databricks | 24 postings | 4.6% |
-| Spark | 21 postings | 4.1% |
-| AWS | 16 postings | 3.1% |
-| dbt | 12 postings | 2.3% |
-| Airflow | 8 postings | 1.5% |
-| Kafka | 7 postings | 1.4% |
-| Scala | 6 postings | 1.2% |
-| Java | 4 postings | 0.8% |
-| BigQuery | 3 postings | 0.6% |
-| Redshift | 2 postings | 0.4% |
-| GCP | 2 postings | 0.4% |
-| Docker | 1 posting | 0.2% |
+| SQL | 17 postings | 13.1% |
+| Python | 10 postings | 7.7% |
+| AWS | 9 postings | 6.9% |
+| Snowflake | 5 postings | 3.8% |
+| Databricks | 5 postings | 3.8% |
+| Spark | 4 postings | 3.1% |
+| Kafka | 4 postings | 3.1% |
+| Airflow | 3 postings | 2.3% |
+| BigQuery | 2 postings | 1.5% |
+| GCP | 2 postings | 1.5% |
+| dbt | 1 posting | 0.8% |
+| Redshift | 1 posting | 0.8% |
+| Java | 1 posting | 0.8% |
+| Scala | 1 posting | 0.8% |
+| Docker | 0 postings | 0.0% |
 | Terraform | 0 postings | 0.0% |
 
-The most notable finding is that **76.4% of postings (396 out of 518) mention none of the 16 tracked tools explicitly**.
+The most notable finding is that **76.9% of postings (100 out of 130) mention none of the 16 tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (10.2%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (13.1%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->
