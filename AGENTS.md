@@ -5,9 +5,27 @@ current, not exhaustive — delete anything that stops being true.
 
 ## What this is
 
-A data pipeline: Adzuna API → Snowflake (raw) → dbt (staging + skill extraction) →
+A data pipeline: Adzuna API → DuckDB (raw) → dbt (staging + skill extraction) →
 `export_results.py` → `docs/data.json` / `docs/data_history.json` → GitHub Pages
 dashboard. Runs daily via `.github/workflows/refresh-results.yml`.
+
+## Where the data lives: `data/warehouse/*.csv`, not a database
+
+The warehouse was Snowflake until its free trial expired (Nov 2026, PR #152); it's now
+DuckDB, which is free but is just a local file — and GitHub Actions runners are fresh
+every run. So the tables that can't be rebuilt (`RAW.job_postings`, and the daily
+`ANALYTICS.skill_trends` snapshots) are persisted as sorted CSVs in `data/warehouse/`,
+committed by the daily bot PR. Each run: `load_to_duckdb.py` rebuilds a fresh
+`warehouse/JOB_MARKET_TRACKER.duckdb` from them, dbt runs, `export_results.py` saves
+them back (see `warehouse.py`).
+
+- **Those CSVs are the only copy of the data.** Never delete, regenerate, or
+  hand-edit them casually; `skill_trends` history in particular can't be recomputed.
+- **Don't commit the `.duckdb` file instead** — a binary rewritten daily bloats git
+  history by megabytes a day; append-only CSV stores as small deltas. The root
+  `/warehouse/` ignore rule is anchored on purpose so it can't match `data/warehouse/`.
+- The file must be named `JOB_MARKET_TRACKER.duckdb`: dbt-duckdb names its catalog
+  after the file, which matches `database:` in `models/sources.yml`.
 
 ## Branch protection and the daily bot
 
@@ -40,17 +58,19 @@ Always write the body to a scratch file and use `--body-file` instead.
 pip install -r requirements-dev.txt -r requirements.txt
 pytest -v
 ```
-`requirements-dev.txt` includes `duckdb`, needed for `tests/test_demo.py` — a bare
-`pytest.ini`-driven run without it fails on collection, not on a real test failure.
-Coverage is enforced at 100% (`--cov-fail-under=100` in `pytest.ini`, scoped via
-`.coveragerc`) — new logic without a test fails CI outright, not just a warning.
+`requirements-dev.txt` includes `dbt-duckdb`, needed for `tests/test_demo.py`, which
+shells out to the `dbt` executable — run `pytest` with the virtualenv **activated**
+(`source .venv/bin/activate`), or those tests fail with `FileNotFoundError: 'dbt'`
+rather than a real failure. Coverage is enforced at 100% (`--cov-fail-under=100` in
+`pytest.ini`, scoped via `.coveragerc`) — new logic without a test fails CI outright,
+not just a warning.
 
-**When mocking a Snowflake cursor result**, use the real Python type Snowflake
-returns, not whatever's convenient to type. `NUMBER(x,0)` columns (e.g. `COUNT(*)`
-sums) come back as `int`; `NUMBER(x,1+)` columns (rounded percentages, etc.) come
-back as `decimal.Decimal`, not `float`. A test using a `float` literal for the
-latter won't catch a `json.dump()` crash — this shipped and broke production once
-(see `export_results.py`'s `build_history()` and its Decimal regression test).
+**Test database code against a real DuckDB, not mocks.** DuckDB runs in-process, so
+`duckdb.connect()` (in-memory) or a file under `tmp_path` costs nothing and returns
+the real types the code will see. Hand-typed mock results are how a type mismatch
+once shipped: mocked Snowflake rows used a `float` where Snowflake really returned
+`decimal.Decimal`, and `json.dump()` crashed in production (see `build_history()`
+and its Decimal regression test in `tests/test_export_results.py`).
 
 ## Scheduled workflow timing
 
