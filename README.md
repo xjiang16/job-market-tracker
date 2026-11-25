@@ -135,30 +135,30 @@ Apache Airflow is included as a local orchestration implementation demonstrating
 <!-- AUTO-GENERATED:RESULTS:START -->
 ## What the data shows
 
-Current snapshot (updated November 24, 2026): **135 postings** after deduplication.
+Current snapshot (updated November 25, 2026): **143 postings** after deduplication.
 
 | Tool | Mentioned in | Share |
 |------|-------------:|------:|
-| SQL | 17 postings | 12.6% |
-| Python | 10 postings | 7.4% |
-| AWS | 9 postings | 6.7% |
-| Snowflake | 5 postings | 3.7% |
-| Databricks | 5 postings | 3.7% |
-| Spark | 4 postings | 3.0% |
-| Kafka | 4 postings | 3.0% |
-| Airflow | 3 postings | 2.2% |
-| BigQuery | 2 postings | 1.5% |
-| GCP | 2 postings | 1.5% |
-| Scala | 2 postings | 1.5% |
-| dbt | 1 posting | 0.7% |
+| SQL | 17 postings | 11.9% |
+| Python | 10 postings | 7.0% |
+| AWS | 9 postings | 6.3% |
+| Snowflake | 6 postings | 4.2% |
+| Databricks | 5 postings | 3.5% |
+| Spark | 4 postings | 2.8% |
+| Kafka | 4 postings | 2.8% |
+| Airflow | 3 postings | 2.1% |
+| dbt | 3 postings | 2.1% |
+| BigQuery | 2 postings | 1.4% |
+| GCP | 2 postings | 1.4% |
+| Scala | 2 postings | 1.4% |
 | Redshift | 1 posting | 0.7% |
 | Java | 1 posting | 0.7% |
 | Docker | 0 postings | 0.0% |
 | Terraform | 0 postings | 0.0% |
 
-The most notable finding is that **77.0% of postings (104 out of 135) mention none of the 16 tracked tools explicitly**.
+The most notable finding is that **76.9% of postings (110 out of 143) mention none of the 16 tracked tools explicitly**.
 
-Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (12.6%).
+Instead, most postings describe responsibilities in general terms such as *"build data pipelines"* or *"own the data platform"* rather than naming a specific technology stack. Of the 16 tracked tools, **SQL** appears most often in this sample (11.9%).
 
 This is a growing sample, refreshed automatically once a day via [GitHub Actions](https://github.com/xjiang16/job-market-tracker/actions/workflows/refresh-results.yml). See the [live results page](https://xjiang16.github.io/job-market-tracker/) for the current interactive chart, or the roadmap below for what's next.
 <!-- AUTO-GENERATED:RESULTS:END -->
